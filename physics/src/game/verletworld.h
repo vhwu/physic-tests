@@ -70,7 +70,6 @@ private:
     float _height;
     VerletManager* _manager;
     GeometricManager* _gManager;
-    OBJ* _obj;
 
     Vector3 windDirection;
 };

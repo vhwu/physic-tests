@@ -12,7 +12,7 @@ class Application;
 class Screen
 {
 public:
-    Screen(View* v, Application* a);
+    Screen(View*, Application*);
     virtual ~Screen();
 
     //Pass to world

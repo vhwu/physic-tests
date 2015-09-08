@@ -668,7 +668,7 @@ void TriangleMesh::applyWind(Tri* t){
     }
 }
 */
-void TriangleMesh::onTick(float seconds){
+void TriangleMesh::onTick(float ){
         for(unsigned int i = 0; i<_triangles.size(); i++){
             calculate(_triangles.at(i));
             applyWind(_triangles.at(i));
@@ -769,8 +769,7 @@ void TriangleMesh::onDraw(Graphic* g){
     Verlet::onDraw(g);
 
     g->cull(false);
-    for(int i = 0; i<_triangles.size(); i++){
-        Tri* t = _triangles.at(i);
+    for(Tri* t: _triangles){
         g->setColor(Vector4(t->normal.x*.4,.65+t->normal.y*.3,.77+t->normal.z*.15,1));
         g->drawTriangle(t->vertices,t->normal);
 

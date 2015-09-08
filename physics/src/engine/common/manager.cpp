@@ -10,6 +10,8 @@ Manager::~Manager()
 
 }
 
-void Manager::onUI(Graphic *g){}
+void Manager::onUI(Graphic* ){}
 
-Vector3 Manager::collideTerrain(Entity* e){}
+Vector3 Manager::collideTerrain(Entity* ){
+    return Vector3(0,0,0);
+}

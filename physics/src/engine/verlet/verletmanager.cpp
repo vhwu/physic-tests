@@ -76,4 +76,5 @@ void VerletManager::onDraw(Graphic *g){
 Vector3 VerletManager::collideTerrain(Entity* e){
     for(Verlet * v: verlets)
         v->collide(e);
+    return Vector3(0,0,0);
 }

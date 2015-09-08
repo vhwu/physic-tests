@@ -1,7 +1,7 @@
 #include "screen.h"
 #include "view.h"
 
-Screen::Screen(View* v, Application *a)
+Screen::Screen(View* , Application*)
 {
 
 }

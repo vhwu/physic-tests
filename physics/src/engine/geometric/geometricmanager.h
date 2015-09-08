@@ -8,7 +8,7 @@
 
 
 class Ellipsoid;
-class CollisionInfo;
+struct CollisionInfo;
 class OBJ;
 class GeometricManager: public Manager
 {

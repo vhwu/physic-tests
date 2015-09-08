@@ -146,8 +146,7 @@ bool RayTracer::hitTriangle(Triangle tri, HitTest &result){
 
 bool RayTracer::hitMesh(std::vector<Triangle *> triangles, HitTest &result){
     bool h = false;
-    for (int i = 0; i < triangles.size(); i++){
-        Triangle* t = triangles.at(i);
+    for (Triangle* t: triangles){
         HitTest temp;
         bool hit = hitTriangle(t,temp);
         if(hit&&(temp.t<result.t)){
@@ -160,8 +159,7 @@ bool RayTracer::hitMesh(std::vector<Triangle *> triangles, HitTest &result){
 
 bool RayTracer::hitMesh(std::vector<Triangle> triangles, HitTest &result){
     bool h = false;
-    for (int i = 0; i < triangles.size(); i++){
-        Triangle t = triangles.at(i);
+    for (Triangle t: triangles){
         HitTest temp;
         bool hit = hitTriangle(t,temp);
         if(hit&&(temp.t<result.t)){

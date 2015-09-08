@@ -16,10 +16,10 @@ void Shape::translate(const Vector3& t){
     _pos+=t;
 }
 
-Collision Shape::collide(Shape* shape){
+Collision Shape::collide(Shape* ){
     return Collision();}
 
-Collision Shape::collideEllipsoid(Ellipsoid* e){
+Collision Shape::collideEllipsoid(Ellipsoid* ){
     return Collision();
 }
 

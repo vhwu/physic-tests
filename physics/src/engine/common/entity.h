@@ -13,15 +13,15 @@ struct Collision;
 class Entity
 {
 public:
-    Entity(const Vector3& pos = Vector3(0,0,0),
-           const Vector3& dim = Vector3(0,0,0));
+    Entity(const Vector3& pos= Vector3(0,0,0),
+           const Vector3& dim= Vector3(0,0,0));
     Entity(Shape* s);
     virtual ~Entity();
 
     //Gets movement vector from _vel + _acc (reset) and stores in _toMove
     virtual void onTick(float seconds);
     virtual void onDraw(Graphic *g);
-    virtual void onUI(Graphic *g);
+    virtual void onUI(Graphic *);
 
     //Getters
     Shape* getShape(){return _shape;}
@@ -45,11 +45,11 @@ public:
     void applyAcc(const Vector3& a);
     virtual void move(const Vector3& translate)=0;
 
-    virtual void onCollide(Entity *e, const Vector3& mtv);
+    virtual void onCollide(Entity *, const Vector3& mtv);
     Collision collide(Entity* e);
 protected:
     Shape* _shape;
-    Vector3 _acc, _vel;
+    Vector3 _vel, _acc;
     //For continuous collision detection:
     //Stores movement vector for manager to use in collide() calculations
     Vector3 _toMove;

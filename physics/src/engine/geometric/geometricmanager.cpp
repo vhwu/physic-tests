@@ -30,7 +30,7 @@ GeometricManager::~GeometricManager()
     delete _obj;
 }
 
-void GeometricManager::onTick(float seconds){}
+void GeometricManager::onTick(float ){}
 
 void GeometricManager::onDraw(Graphic *g){
     //Draw world's geometry
@@ -105,8 +105,7 @@ CollisionInfo GeometricManager::sweep(Entity* e){
 CollisionInfo GeometricManager::collideTriangles(Ellipsoid* e, const Vector3& v){
     CollisionInfo least = CollisionInfo();
 
-    for (int i = 0; i < _triangles.size(); i++){
-        Triangle t = _triangles.at(i);
+    for (Triangle t: _triangles){
         CollisionInfo c = t.collide(e, v);
         if(c.t>0 && (least.t==0||c.t<least.t)){
             least = c;

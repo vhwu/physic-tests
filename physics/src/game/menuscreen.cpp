@@ -12,13 +12,13 @@ MenuScreen::MenuScreen(View* v, Application* a): Screen(v, a)
 MenuScreen::~MenuScreen()
 {}
 
-void MenuScreen::create(int mode)
+void MenuScreen::create(int )
 {}
 
-void MenuScreen::tick(float seconds)
+void MenuScreen::tick(float )
 {}
 
-void MenuScreen::onDraw(Graphic *g)
+void MenuScreen::onDraw(Graphic* )
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -27,21 +27,21 @@ void MenuScreen::onDraw(Graphic *g)
                        "Press any key to start", _view->font());
 }
 
-void MenuScreen::onUI(Graphic* g){}
+void MenuScreen::onUI(Graphic* ){}
 
-void MenuScreen::onResize(const Vector2& size)
+void MenuScreen::onResize(const Vector2& )
 {}
 
-void MenuScreen::mousePressEvent(QMouseEvent *event)
+void MenuScreen::mousePressEvent(QMouseEvent*)
 {}
 
-void MenuScreen::mouseMoveEvent(QMouseEvent *event)
+void MenuScreen::mouseMoveEvent(QMouseEvent*)
 {}
 
-void MenuScreen::mouseReleaseEvent(QMouseEvent *event)
+void MenuScreen::mouseReleaseEvent(QMouseEvent*)
 {}
 
-void MenuScreen::wheelEvent(QWheelEvent *event)
+void MenuScreen::wheelEvent(QWheelEvent*)
 {}
 
 void MenuScreen::keyPressEvent(QKeyEvent *event)
@@ -60,5 +60,5 @@ void MenuScreen::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void MenuScreen::keyReleaseEvent(QKeyEvent *event)
+void MenuScreen::keyReleaseEvent(QKeyEvent*)
 {}

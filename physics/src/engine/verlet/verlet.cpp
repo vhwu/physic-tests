@@ -102,7 +102,7 @@ void Verlet::removeLink(Link* l){
     delete l;
 }
 
-void Verlet::tearLink(Link* l){}
+void Verlet::tearLink(Link* ){}
 
 //***************************for update*****************************//
 //Applies gravity
@@ -123,7 +123,7 @@ void Verlet::verlet(float seconds){
         _normal[i]=Vector3(0,0,0);
     }
 }
-void Verlet::onTick(float seconds){}
+void Verlet::onTick(float ){}
 
 void Verlet::onDraw(Graphic *g){
     g->setLineWidth(1);
@@ -236,6 +236,7 @@ Vector3 Verlet::collide(Entity *e){
         e->setMove(toMove);
         e->setMtv(translation);
     }
+    return Vector3(0,0,0);
 }
 
 //***************************constraints*****************************//
@@ -249,16 +250,13 @@ void Verlet::boxConstraint(const Vector3& _boxMin,
 }
 
 void Verlet::pinConstraint(){
-    for(int i=0; i<pins.size(); i++) {
-        Pin p = pins.at(i);
+    for(Pin p: pins)
         _pos[p.index] = p.pinPos;
-    }
 }
 
 //Uses squareroot approximation
 void Verlet::linkConstraint(){
-    for(int i=0; i<links.size(); i++) {
-        Link* l = links.at(i);
+    for(Link* l: links) {
         Vector3& posA = _pos[l->pointA];
         Vector3& posB = _pos[l->pointB];
 

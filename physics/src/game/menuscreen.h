@@ -9,7 +9,7 @@ public:
     MenuScreen(View* v, Application* a);
     virtual ~MenuScreen();
 
-    void create(int mode);
+    void create(int);
     void tick(float seconds);
     void onDraw(Graphic *g);
     void onUI(Graphic* g);

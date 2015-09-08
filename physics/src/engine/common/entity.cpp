@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-Entity::Entity(const Vector3& pos, const Vector3& dims)
+Entity::Entity(const Vector3& , const Vector3& )
 {
 }
 
@@ -24,7 +24,7 @@ void Entity::onTick(float seconds)
     _acc = Vector3(0,0,0);
 }
 
-void Entity::onUI(Graphic* g){}
+void Entity::onUI(Graphic* ){}
 
 void Entity::onDraw(Graphic* g){
     _shape->onDraw(g);
@@ -34,7 +34,7 @@ void Entity::applyAcc(const Vector3& a){
     _acc+=a;
 }
 
-void Entity::onCollide(Entity *e, const Vector3& mtv){
+void Entity::onCollide(Entity* , const Vector3& mtv){
     Vector3 toMove = this->getMove();
     toMove+=mtv;
    this->setMove(toMove);

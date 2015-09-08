@@ -9,7 +9,7 @@ class Manager
 {
 public:
     Manager();
-    ~Manager();
+    virtual ~Manager();
 
     virtual void onTick(float seconds)=0;
     virtual void onDraw(Graphic *g)=0;
