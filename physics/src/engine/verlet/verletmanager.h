@@ -1,0 +1,51 @@
+#ifndef VERLETMANAGER_H
+#define VERLETMANAGER_H
+
+#include "engine/common/manager.h"
+#include <vector>
+#include "link.h"
+#include "verlet.h"
+#include "rope.h"
+#include "engine/common/raytracer.h"
+
+class Ellipsoid;
+class VerletManager: public Manager
+{
+public:
+    VerletManager();
+    ~VerletManager();
+
+    void onTick(float seconds);
+    void onDraw(Graphic *g);
+
+    void addVerlet(Verlet* v);
+    Verlet* getVerlet(int i){return verlets[i];}
+
+    Vector3 collideTerrain(Entity* e);
+    bool rayTrace(RayTracer* ray, HitTest &result);
+
+    //Settings
+    Vector3 gravity = Vector3(0,-1.5,0);
+    int _numSolves =2;
+    bool solve = false;
+    void enableSolve(){solve = !solve;}
+
+    //Wind
+    void setWind(const Vector3& w){wind = w;}
+    Vector3 wind = Vector3(0,0,0); //unit vector representing direction
+    float windPow = 2.3;
+    float windPowMax = 3;
+    float windScalar = .7;
+
+private:
+    //Verlet objects manager maintains
+    std::vector<Verlet*> verlets;
+
+    //Helpers for onTick, to cycle through each step
+    //Updates positions of all points w/ velocity + acc
+    //void verlet(float seconds);
+    //Adjusts positions to satisfy listed constraints
+    //void constraints();
+};
+
+#endif // VERLETMANAGER_H

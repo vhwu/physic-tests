@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>level/level_lowpoly.png</file>
+    </qresource>
+    <qresource prefix="/levels">
+        <file>level/level_lowpoly.obj</file>
+    </qresource>
+</RCC>

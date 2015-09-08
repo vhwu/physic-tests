@@ -1,0 +1,20 @@
+README
+
+Game Requirements
+========================================
+[ ] The game must have at least one type of enemy that uses path-finding over a navigation mesh
+	-Enemy: onTick, it finds the path between itself + the player 
+[ ] This enemy must interact with the player in some way (e.g. push the player off ledges, shoot at the player, damage the player directly)
+	-Enemy damages player upon contact
+[ ] The game must have a non-arbitrary and reasonably achievable win or loss condition
+	-Loss condition: hp reaches 0
+[ ] The game must be resettable upon win or loss without restarting the program
+	-Game resets upon loss
+[ ] The game can never enter an unwinnable or unloseable state
+[ ] The game must use orthographic projection to display some form of game UI
+	-Hp bar for player
+
+Time spent: 5-10 hours
+
+Bugs:
+-Enemy sometimes gets trapped around corners 
