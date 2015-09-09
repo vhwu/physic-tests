@@ -37,7 +37,6 @@ Ellipsoid* Player::getEllipsoid(){
 
 void Player::onTick(float seconds)
 {
-
     //velocity along the ground plane
     Vector3 goalV = Vector3(0,0,0);
     if(_w) goalV+=_camera->getForward()*_goal;
@@ -48,9 +47,11 @@ void Player::onTick(float seconds)
     if(_f) goalV+=Vector3(0,-1.0,0)*_goal;
 
     _acc += goalV-_vel;
-    Entity::onTick(seconds);
     onGround = _mtv.y>0;
-    _camera->moveTo(_shape->getPos()+Vector3(0,_playerHeight,0));
+
+    Entity::onTick(seconds);
+
+    this->move(this->_toMove);
 }
 
 void Player::onCollide(Entity *e, const Vector3& mtv){
@@ -59,6 +60,8 @@ void Player::onCollide(Entity *e, const Vector3& mtv){
 
 void Player::move(const Vector3& translate){
     _shape->translate(translate);
+    _camera->moveTo(_shape->getPos()+Vector3(0,_playerHeight,0));
+    _toMove = Vector3(0,0,0);
 }
 
 

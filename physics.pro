@@ -51,7 +51,9 @@ SOURCES += \
     src/engine/verlet/verletcube.cpp \
     src/engine/common/raytracer.cpp \
     src/engine/verlet/trianglemesh.cpp \
-    src/engine/verlet/shear.cpp
+    src/engine/verlet/shear.cpp \
+    src/engine/verlet/cloth.cpp \
+    src/game/verlettest1.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -84,7 +86,9 @@ HEADERS += \
     src/engine/verlet/trianglemesh.h \
     src/engine/common/collision.h \
     src/engine/verlet/shear.h \
-    src/engine/common/ellipsoid.h
+    src/engine/common/ellipsoid.h \
+    src/engine/verlet/cloth.h \
+    src/game/verlettest1.h
 
 
 FORMS += src/mainwindow.ui

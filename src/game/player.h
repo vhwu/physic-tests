@@ -11,7 +11,7 @@ class Graphic;
 class Ellipsoid;
 
 //Controls player movements with WASD
-//Include in tick, keyPressEvent and keyReleaseEvent
+//Include in keyPressEvent and keyReleaseEvent
 class Player: public Entity
 {
 public:
@@ -26,6 +26,7 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
+    //Updates position of player (+ attached camera) by _toMove, and resets _toMove
     void move(const Vector3& translate);
     void onCollide(Entity *e, const Vector3 &mtv);
 

@@ -53,7 +53,7 @@ protected:
     void removeEntity(Entity* const &e);
     void addManager(Manager* const &m);
 
-    const Vector3 _gravity=Vector3(0,-9.8,0);
+    const Vector3 _gravity=Vector3(0,-2,0);
 };
 
 #endif // WORLD_H

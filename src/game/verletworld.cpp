@@ -13,7 +13,6 @@ VerletWorld::VerletWorld(Screen* s): World(s)
 {
     _height = 3;
     _camera = new Camera(Vector2(800, 600), false);
-    _camera->translate(Vector3(0,_height,0));
 
     _player = new Player(_camera,_height);
     _player->setPos(Vector3(0,3,-1));
@@ -22,16 +21,10 @@ VerletWorld::VerletWorld(Screen* s): World(s)
     _manager = new VerletManager();
     this->addManager(_manager);
 
-    //_gManager = new GeometricManager("island", true);
-    //_gManager = new GeometricManager("one", true);
-
     _gManager = new GeometricManager("lowpoly", true);
-    //_gManager = new GeometricManager(":/levels/mountain_maya.obj", false);
-    //_gManager = new GeometricManager(":/levels/island01.obj", false);
     this->addManager(_gManager);
 
     //VERLETS
-
     //TriangleMesh* tear1 = new TriangleMesh(Vector2(15,40), .15, Vector3(-1,5,0), _manager, true, true);
     TriangleMesh* tear1 = new TriangleMesh(Vector2(20,20), .3, Vector3(-1,6,0), _manager, true, true);
     tear1->createPin(0);
@@ -231,7 +224,6 @@ void VerletWorld::mousePressEvent(QMouseEvent *event){
 
 void VerletWorld::mouseMoveEvent(QMouseEvent *event){
     World::mouseMoveEvent(event);
-
 }
 
 void VerletWorld::mouseReleaseEvent(QMouseEvent *event){
