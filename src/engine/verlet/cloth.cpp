@@ -91,23 +91,23 @@ Cloth::Cloth(const Vector2 &dimension, float w,
             if(j+2<c)  //horizontal
                 createLink(j+(i*c),(i*c)+j+2);
             if(i+2<r && (j==0 || j==c-1)) //vertical, at edges
-                createLink(j+(i*c),(i+2)*c+j,(i+1)*c+j);
+                createLink(j+(i*c),(i+2)*c+j);
             if(i+2<r && j+1<c){ //diagonal right-down
                 if(j+1!=c-1&& (j!=0||i%2==0)){
                     if(i%2==0)
-                        createLink(j+c*i,j+1+c*(i+2),(i+1)*c+j+1);
+                        createLink(j+c*i,j+1+c*(i+2));
                     else
-                        createLink(j+c*i,j+1+c*(i+2),(i+1)*c+j);
+                        createLink(j+c*i,j+1+c*(i+2));
                 }
                 else if(j+1==c-1 && i%2==1)
-                    createLink(j+c*i,j+1+c*(i+2),(i+1)*c+j);
+                    createLink(j+c*i,j+1+c*(i+2));
             }
             if(i+2<r && j>0 && j-1<c){ //diagonal left-down
                 if((!(j==c-1&&i%2==0)) && (!(j==1&&i%2!=0))){
                     if(i%2==1)
-                        createLink(j+c*i,j-1+c*(i+2),(i+1)*c+j-1);
+                        createLink(j+c*i,j-1+c*(i+2));
                     else
-                        createLink(j+c*i,j-1+c*(i+2),(i+1)*c+j);
+                        createLink(j+c*i,j-1+c*(i+2));
                 }
             }
         }
@@ -120,13 +120,15 @@ void Cloth::onTick(float ){
 }
 
 void Cloth::onDraw(Graphic* g){
-    g->setColor(Vector3(1,1,1));
-    Verlet::onDraw(g);
+//    g->setColor(Vector3(1,1,1));
+//    Verlet::onDraw(g);
 
+    g->cull(false);
     for(Tri* t: _triangles){
         g->setColor(Vector4(t->normal.x*.4,.65+t->normal.y*.3,.77+t->normal.z*.15,1));
         g->drawTriangle(t->vertices,t->normal);
     }
+    g->cull(true);
 }
 
 void Cloth::triangulate(int a, int b, int c){

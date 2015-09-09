@@ -4,8 +4,6 @@
 #include "engine/common/raytracer.h"
 #include "engine/common/entity.h"
 #include "engine/geometric/geometricmanager.h"
-#include "trianglemesh.h"
-#include "net.h"
 #include "verletcube.h"
 
 VerletManager::VerletManager(): Manager()

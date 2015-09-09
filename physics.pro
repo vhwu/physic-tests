@@ -44,14 +44,10 @@ SOURCES += \
     src/engine/common/manager.cpp \
     src/engine/geometric/geometricmanager.cpp \
     src/engine/verlet/verletmanager.cpp \
-    src/game/verletworld.cpp \
     src/engine/verlet/verlet.cpp \
     src/engine/verlet/rope.cpp \
-    src/engine/verlet/net.cpp \
     src/engine/verlet/verletcube.cpp \
     src/engine/common/raytracer.cpp \
-    src/engine/verlet/trianglemesh.cpp \
-    src/engine/verlet/shear.cpp \
     src/engine/verlet/cloth.cpp \
     src/game/verlettest1.cpp
 
@@ -77,15 +73,11 @@ HEADERS += \
     src/engine/common/manager.h \
     src/engine/geometric/geometricmanager.h \
     src/engine/verlet/verletmanager.h \
-    src/game/verletworld.h \
     src/engine/verlet/verlet.h \
     src/engine/verlet/rope.h \
-    src/engine/verlet/net.h \
     src/engine/verlet/verletcube.h \
     src/engine/common/raytracer.h \
-    src/engine/verlet/trianglemesh.h \
     src/engine/common/collision.h \
-    src/engine/verlet/shear.h \
     src/engine/common/ellipsoid.h \
     src/engine/verlet/cloth.h \
     src/game/verlettest1.h
