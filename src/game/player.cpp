@@ -11,7 +11,7 @@ Player::Player(Camera* c, float height): Entity()
 
     _goal =7; //4;
     _dampen = .95f;
-    _jumpVel = 8;
+    _jumpVel = 4;
 
     _w=false;
     _a=false;

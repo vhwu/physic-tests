@@ -25,18 +25,11 @@ public:
     bool rayTrace(RayTracer* ray, HitTest &result);
 
     //Settings
-    Vector3 gravity = Vector3(0,-1.5,0);
-    int _numSolves =2;
+    //Vector3 gravity = Vector3(0,-1.5,0);
+    Vector3 gravity = Vector3(0,0,0);
+    int _numSolves =3;
     bool solve = false;
     void enableSolve(){solve = !solve;}
-
-    //Wind
-    void setWind(const Vector3& w){wind = w;}
-    Vector3 wind = Vector3(0,0,0); //unit vector representing direction
-    float windPow = 2.3;
-    float windPowMax = 3;
-    float windScalar = .7;
-
 private:
     //Verlet objects manager maintains
     std::vector<Verlet*> verlets;

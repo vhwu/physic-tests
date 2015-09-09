@@ -46,10 +46,19 @@ public:
     int getSize(){return numPoints;}
     Vector3 getPoint(const int& id){return _pos[id];}
 
+    //CONSTRAINTS
     //Fix point at specified index to its _pos
     void createPin(int index);
-
+    //Fix point at specified index to a range within one axis
     void createTranslate(int index, Axis a, float range);
+
+    //Selection
+    void addSelect(int index){
+        selectable.push_back(index);
+    }
+    bool canSelect(int index){
+        return (std::find(selectable.begin(), selectable.end(), index) != selectable.end());
+    }
 
     //Sets point at specified index to given pos
     void setPos(int index, const Vector3& pos);
@@ -97,6 +106,7 @@ protected:
     std::vector<Pin> pins;
     std::vector<Link*> links;
     std::vector<TranslationConstraint> t_constraints;
+    std::vector<int> selectable;
 };
 
 #endif // VERLET_H

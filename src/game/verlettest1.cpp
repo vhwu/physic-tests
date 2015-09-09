@@ -14,40 +14,72 @@ VerletTest1::VerletTest1(Screen *s): World(s)
     _camera = new Camera(Vector2(800, 600), false);
 
     _player = new Player(_camera,_height);
-    _player->setPos(Vector3(-3,3,-3));
+    _player->setPos(Vector3(-1,3,-1));
     this->addEntity(_player);
 
     _manager = new VerletManager();
     this->addManager(_manager);
 
     //VERLETS
-    Cloth* c1 = new Cloth(Vector2(20,20), .3, Vector3(0,0,0), Y, _manager);
-    c1->pinCorner(0);
-    c1->pinCorner(1);
-    c1->pinCorner(2);
-    c1->pinCorner(3);
-    c1->createTranslate(10,  Y, 1);
+    Cloth* start = new Cloth(Vector2(12,12), .3, Vector3(0,0,0), Y, _manager);
+    start->pinCorner(0); start->pinCorner(1); start->pinCorner(2); start->pinCorner(3);
+    Cloth* end = new Cloth(Vector2(12,12), .3, Vector3(-26,4,0), Y, _manager);
+    end->pinCorner(0); end->pinCorner(1); end->pinCorner(2); end->pinCorner(3);
+    _manager->addVerlet(end);
+    _manager->addVerlet(start);
+
+    Cloth* c1 = new Cloth(Vector2(12,90), .3, Vector3(-3.5,0,0), Y, _manager);
+    c1->createTranslate(0,  Y, 5);
+    c1->createTranslate(6,  Y, 5);
+    c1->createTranslate(11,  Y, 5);
+
+    Vector3 test1 = c1->getPoint(1079);
+    Vector3 test2 = c1->getPoint(1068);
+
+    c1->setPos(1079,Vector3(-25,test1.y,test1.z));
+    c1->setPos(1068,Vector3(-25,test2.y,test2.z));
+
+    c1->createTranslate(1079,  Y, 5);
+    c1->createTranslate(1068,  Y, 5);
+    c1->addSelect(6);
 
     _manager->addVerlet(c1);
+
 
     //COLLECTIBLES
     CollectibleManager* cm = new CollectibleManager(_player);
     this->addManager(cm);
 
-    Token* token1 = new Token(Vector3(0,5,0),_player);
-    Token* token2 = new Token(Vector3(0,4,0),_player);
-    Token* token3 = new Token(Vector3(0,3,0),_player);
-    Token* token4 = new Token(Vector3(0,2,0),_player);
+    Token* token0 = new Token(Vector3(-4,-1,-1.5),_player);
+    Token* token1 = new Token(Vector3(-7,-2,-1.5),_player);
+    Token* token2 = new Token(Vector3(-10,-1,-1.5),_player);
+    Token* token3 = new Token(Vector3(-13,0,-1.5),_player);
+    Token* token4 = new Token(Vector3(-16,1,-1.5),_player);
+    Token* token5 = new Token(Vector3(-19,2,-1.5),_player);
+    Token* token6 = new Token(Vector3(-22,1,-1.5),_player);
+    Token* token10 = new Token(Vector3(-2,-1.2,-1.3),_player);
+    Token* token11 = new Token(Vector3(-4,-0.3,-1.6),_player);
+    Token* token12 = new Token(Vector3(-11,.3,-1.4),_player);
+    Token* token13 = new Token(Vector3(-14,0.1,-1.8),_player);
+    Token* token14 = new Token(Vector3(-16,-.2,-1.2),_player);
+    Token* token15 = new Token(Vector3(-18,.14,-1.25),_player);
+    Token* token16 = new Token(Vector3(-21,1,-1.7),_player);
 
+    cm->addCollectible(token0);
     cm->addCollectible(token1);
     cm->addCollectible(token2);
     cm->addCollectible(token3);
     cm->addCollectible(token4);
+    cm->addCollectible(token5);
+    cm->addCollectible(token6);
+    cm->addCollectible(token10);
+    cm->addCollectible(token11);
+    cm->addCollectible(token12);
+    cm->addCollectible(token13);
+    cm->addCollectible(token14);
+    cm->addCollectible(token15);
+    cm->addCollectible(token16);
 
-//    Cloth* c2 = new Cloth(Vector2(10,10), .3, Vector3(-2,0,-2), 1, _manager);
-//    Cloth* c3 = new Cloth(Vector2(10,10), .3, Vector3(-2,0,-2), 3, _manager);
-//    _manager->addVerlet(c2);
-//    _manager->addVerlet(c3);
 
     //Raytracing while toggling between stationary + moveable mouse
     if(mouseMove)
@@ -90,8 +122,6 @@ void VerletTest1::onTick(float seconds){
 }
 
 void VerletTest1::onDraw(Graphic *g){
-    World::onDraw(g);
-
     //VISUALIZATION
     if(dragMode){
         //draw selected point in red
@@ -109,15 +139,19 @@ void VerletTest1::onDraw(Graphic *g){
     }
     else if(hit.hit){
         //draw point that's being hovered in yellow
-        g->setColor(Vector3(1,1,0));
+        if(hit.v->canSelect(hit.id))
+            g->setColor(Vector3(0,1,0));
+        else
+            g->setColor(Vector3(1,1,0));
         g->transform(&Graphic::drawUnitSphere,hit.v->getPoint(hit.id),0,
             Vector3(.1,.1,.1));
     }
+    World::onDraw(g);
 }
 
 void VerletTest1::mousePressEvent(QMouseEvent *event){
     World::mousePressEvent(event);
-    if(event->button() == Qt::LeftButton&& hit.hit){
+    if(event->button() == Qt::LeftButton&& hit.hit && hit.v->canSelect(hit.id)){
         dragMode = true;
         draggedPoint = hit.id;
         draggedVerlet = hit.v;
@@ -143,6 +177,8 @@ void VerletTest1::wheelEvent(QWheelEvent *event){
 
 void VerletTest1::keyPressEvent(QKeyEvent *event){
     World::keyPressEvent(event);
+    if(event->key() == Qt::Key_F)
+        _manager->enableSolve();
     _player->keyPressEvent(event);
 }
 
