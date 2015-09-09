@@ -9,9 +9,6 @@ Player::Player(Camera* c, float height): Entity()
     _camera = c;
     _playerHeight = height;
 
-    _vel = Vector3(0,0,0);
-    _acc = Vector3(0,0,0);
-
     _goal =7; //4;
     _dampen = .95f;
     _jumpVel = 8;

@@ -4,6 +4,8 @@
 #include "engine/common/graphic.h"
 #include "engine/verlet/verletmanager.h"
 #include "engine/verlet/cloth.h"
+#include "token.h"
+#include "engine/common/collectiblemanager.h"
 
 VerletTest1::VerletTest1(Screen *s): World(s)
 {
@@ -23,8 +25,21 @@ VerletTest1::VerletTest1(Screen *s): World(s)
     c1->pinCorner(1);
     c1->pinCorner(2);
     c1->pinCorner(3);
-
     _manager->addVerlet(c1);
+
+    //COLLECTIBLES
+    CollectibleManager* cm = new CollectibleManager(_player);
+    this->addManager(cm);
+
+    Token* token1 = new Token(Vector3(0,5,0),_player);
+    Token* token2 = new Token(Vector3(0,4,0),_player);
+    Token* token3 = new Token(Vector3(0,3,0),_player);
+    Token* token4 = new Token(Vector3(0,2,0),_player);
+
+    cm->addCollectible(token1);
+    cm->addCollectible(token2);
+    cm->addCollectible(token3);
+    cm->addCollectible(token4);
 
 //    Cloth* c2 = new Cloth(Vector2(10,10), .3, Vector3(-2,0,-2), 1, _manager);
 //    Cloth* c3 = new Cloth(Vector2(10,10), .3, Vector3(-2,0,-2), 3, _manager);
@@ -40,10 +55,9 @@ VerletTest1::VerletTest1(Screen *s): World(s)
 
 VerletTest1::~VerletTest1()
 {
-    delete _camera;
-    delete _player;
-    delete _manager;
+    delete _ray;
 }
+
 void VerletTest1::onTick(float seconds){
     //verlet collisions: offset player if not colliding with ground
     _manager->collideTerrain(_player);

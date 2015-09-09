@@ -4,7 +4,9 @@
 
 #include <iostream>
 
-Entity::Entity(const Vector3& , const Vector3& )
+Entity::Entity(const Vector3& , const Vector3& ):
+    _vel(Vector3(0,0,0)),
+    _acc(Vector3(0,0,0))
 {
 }
 

@@ -49,7 +49,10 @@ SOURCES += \
     src/engine/verlet/verletcube.cpp \
     src/engine/common/raytracer.cpp \
     src/engine/verlet/cloth.cpp \
-    src/game/verlettest1.cpp
+    src/game/verlettest1.cpp \
+    src/engine/common/collectiblemanager.cpp \
+    src/engine/common/collectible.cpp \
+    src/game/token.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -80,7 +83,10 @@ HEADERS += \
     src/engine/common/collision.h \
     src/engine/common/ellipsoid.h \
     src/engine/verlet/cloth.h \
-    src/game/verlettest1.h
+    src/game/verlettest1.h \
+    src/engine/common/collectiblemanager.h \
+    src/engine/common/collectible.h \
+    src/game/token.h
 
 
 FORMS += src/mainwindow.ui

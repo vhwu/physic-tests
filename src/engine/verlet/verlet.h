@@ -33,7 +33,7 @@ public:
     virtual ~Verlet();
 
     //Maximum points, for declaring arrays
-    static const int NUM = 10000;
+    static const int NUM = 5000;
     VerletManager* _manager;
     //between 0 and 1: how much cloth is influenced by collisions
     float sphereInfluence = 1;

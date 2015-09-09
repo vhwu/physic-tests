@@ -10,7 +10,7 @@ class VerletTest1:  public World
 {
 public:
     VerletTest1(Screen* s);
-    ~VerletTest1();
+    virtual ~VerletTest1();
 
     void onTick(float seconds);
     void onDraw(Graphic *g);

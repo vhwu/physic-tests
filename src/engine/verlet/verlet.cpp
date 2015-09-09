@@ -102,7 +102,8 @@ Vector3 Verlet::collide(Entity *e){
     //determines whether to move points themselves
     bool solve = _manager->solve;
     //if player is on ground (geometric collision), verlet won't influence it
-    bool hitGeo = e->getMtv()!=Vector3(0,0,0);
+    bool hitGeo = false;
+    //bool hitGeo = e->getMtv()!=Vector3(0,0,0);
 
     float count = 0;  //how many points hit
     Vector3 translation = Vector3(0,0,0); //accumulative mtv

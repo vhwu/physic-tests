@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "engine/common/collision.h"
 #include "engine/common/screen.h"
+#include <iostream>
 
 World::World(Screen* s)
 {
@@ -14,7 +15,11 @@ World::World(Screen* s)
 
 World::~World()
 {
-
+    qDeleteAll(_managers);
+    _managers.clear();
+    qDeleteAll(_entities);
+    _entities.clear();
+    delete _camera;
 }
 
 void World::onTick(float seconds)
