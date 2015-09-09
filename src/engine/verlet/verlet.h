@@ -12,8 +12,12 @@ class VerletManager;
 class GeometricManager;
 class Graphic;
 class Entity;
-class Bend;
+class TranslationConstraint;
 
+enum Axis
+{
+    X, Y, Z
+};
 struct Tri
 {
     int a, b, c;
@@ -44,6 +48,9 @@ public:
 
     //Fix point at specified index to its _pos
     void createPin(int index);
+
+    void createTranslate(int index, Axis a, float range);
+
     //Sets point at specified index to given pos
     void setPos(int index, const Vector3& pos);
 
@@ -55,6 +62,7 @@ public:
     //Solve individual constraints
     void linkConstraint();
     void pinConstraint();
+    void translateConstraint();
 
     //Draw
     virtual void onDraw(Graphic *g);
@@ -88,6 +96,7 @@ protected:
     }Pin;
     std::vector<Pin> pins;
     std::vector<Link*> links;
+    std::vector<TranslationConstraint> t_constraints;
 };
 
 #endif // VERLET_H

@@ -7,11 +7,10 @@
 class Cloth: public Verlet
 {
 public:
-    //@param axis: 1 = x, 2 = y, 3 = z
     //Cloth's points will be unchanged along specified axis,
     //and be spaced (by -width) along other two axis
     Cloth(const Vector2& dimension, float width,
-          const Vector3& start, int axis, VerletManager* vm);
+          const Vector3& start, Axis a, VerletManager* vm);
     ~Cloth();
 
     void onTick(float seconds);

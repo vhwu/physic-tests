@@ -1,7 +1,7 @@
 #include "cloth.h"
 
 Cloth::Cloth(const Vector2 &dimension, float w,
-             const Vector3 &start, int axis, VerletManager *vm): Verlet(vm)
+             const Vector3 &start, Axis a, VerletManager *vm): Verlet(vm)
 {
     int r = dimension.y;
     int c = dimension.x;
@@ -13,11 +13,11 @@ Cloth::Cloth(const Vector2 &dimension, float w,
     Vector3 width;
     Vector3 height;
 
-    if(axis==1){
+    if(a==X){
         width = Vector3(0,0,-w);
         height = Vector3(0,-h,0);
     }
-    else if(axis==2){
+    else if(a==Y){
         width = Vector3(0,0,-w);
         height = Vector3(-h,0,0);
     }
@@ -120,8 +120,8 @@ void Cloth::onTick(float ){
 }
 
 void Cloth::onDraw(Graphic* g){
-//    g->setColor(Vector3(1,1,1));
-//    Verlet::onDraw(g);
+    g->setColor(Vector3(1,1,1));
+    Verlet::onDraw(g);
 
     g->cull(false);
     for(Tri* t: _triangles){

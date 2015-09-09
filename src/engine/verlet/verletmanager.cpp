@@ -53,6 +53,7 @@ void VerletManager::onTick(float seconds){
             for(int i=0; i<_numSolves; i++){
                 v->linkConstraint();
                 v->pinConstraint();
+                v->translateConstraint();
             }
             v->onTick(seconds);
         }

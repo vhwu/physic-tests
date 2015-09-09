@@ -52,7 +52,8 @@ SOURCES += \
     src/game/verlettest1.cpp \
     src/engine/common/collectiblemanager.cpp \
     src/engine/common/collectible.cpp \
-    src/game/token.cpp
+    src/game/token.cpp \
+    src/engine/verlet/translationconstraint.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -86,7 +87,8 @@ HEADERS += \
     src/game/verlettest1.h \
     src/engine/common/collectiblemanager.h \
     src/engine/common/collectible.h \
-    src/game/token.h
+    src/game/token.h \
+    src/engine/verlet/translationconstraint.h
 
 
 FORMS += src/mainwindow.ui

@@ -4,6 +4,7 @@
 #include "engine/common/graphic.h"
 #include "engine/verlet/verletmanager.h"
 #include "engine/verlet/cloth.h"
+#include "engine/verlet/verlet.h"
 #include "token.h"
 #include "engine/common/collectiblemanager.h"
 
@@ -20,11 +21,13 @@ VerletTest1::VerletTest1(Screen *s): World(s)
     this->addManager(_manager);
 
     //VERLETS
-    Cloth* c1 = new Cloth(Vector2(20,20), .3, Vector3(0,0,0), 2, _manager);
+    Cloth* c1 = new Cloth(Vector2(20,20), .3, Vector3(0,0,0), Y, _manager);
     c1->pinCorner(0);
     c1->pinCorner(1);
     c1->pinCorner(2);
     c1->pinCorner(3);
+    c1->createTranslate(10,  Y, 1);
+
     _manager->addVerlet(c1);
 
     //COLLECTIBLES

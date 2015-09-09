@@ -1,6 +1,7 @@
 #include "verlet.h"
 #include "verletmanager.h"
 #include "link.h"
+#include "translationconstraint.h"
 #include "engine/common/graphic.h"
 #include "engine/common/raytracer.h"
 #include "engine/geometric/geometricmanager.h"
@@ -37,7 +38,12 @@ void Verlet::createPin(int index){
     Pin p = {index, _pos[index]};
     pins.push_back(p);
 }
-//***************************editing links*****************************//
+
+void Verlet::createTranslate(int index, Axis a, float range){
+    TranslationConstraint t = TranslationConstraint(index,a,range,this);
+    t_constraints.push_back(t);
+}
+
 Link* Verlet::createLink(int a, int b){
     float length = (_pos[b]-_pos[a]).length();
     Link* l = new Link(a, b, length);
@@ -68,6 +74,8 @@ void Verlet::onDraw(Graphic *g){
     g->setLineWidth(1);
     foreach(Link* l, links)
         drawLink(l,g);
+    foreach(TranslationConstraint t, t_constraints)
+        t.onDraw(g);
 }
 
 void Verlet::drawLink(Link *l, Graphic *g){
@@ -159,4 +167,9 @@ void Verlet::linkConstraint(){
         posA -= delta;
         posB += delta;
     }
+}
+
+void Verlet::translateConstraint(){
+     for(TranslationConstraint t: t_constraints)
+        t.constrain();
 }
