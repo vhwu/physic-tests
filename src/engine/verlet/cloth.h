@@ -16,7 +16,10 @@ public:
     void onTick(float seconds);
     void onDraw(Graphic *g);
 
-    void pinCorner(int c);
+    //Returns index of corners (0-3)
+    int getCorner(int c);
+    //Pins all corners
+    void pinCorners();
 private:
     //Called in constructor to add triangles
     void triangulate(int a, int b, int c);

@@ -36,23 +36,28 @@ public:
     Verlet(VerletManager* m);
     virtual ~Verlet();
 
+    VerletManager* _manager;
     //Maximum points, for declaring arrays
     static const int NUM = 5000;
-    VerletManager* _manager;
     //between 0 and 1: how much cloth is influenced by collisions
     float sphereInfluence = 1;
     Vector3 rayTraceSize = Vector3(.2,.2,.2);
 
     int getSize(){return numPoints;}
     Vector3 getPoint(const int& id){return _pos[id];}
+    //Sets point at specified index to given pos
+    void setPos(int index, const Vector3& pos);
 
     //CONSTRAINTS
-    //Fix point at specified index to its _pos
-    void createPin(int index);
-    //Fix point at specified index to a range within one axis
-    void createTranslate(int index, Axis a, float range);
+    //Creation
+    void createPin(int index); //Fix point at specified index to its _pos
+    void createTranslate(int index, Axis a, float range); //Fix point at specified index to a range within one axis
+    //Solving
+    void linkConstraint();
+    void pinConstraint();
+    void translateConstraint();
 
-    //Selection
+    //SELECTION
     void addSelect(int index){
         selectable.push_back(index);
     }
@@ -60,18 +65,10 @@ public:
         return (std::find(selectable.begin(), selectable.end(), index) != selectable.end());
     }
 
-    //Sets point at specified index to given pos
-    void setPos(int index, const Vector3& pos);
-
     //Update
     virtual void onTick(float seconds);
     void verlet(float seconds);  //sets pos + prevPos
     Vector3 collide(Entity* e);
-
-    //Solve individual constraints
-    void linkConstraint();
-    void pinConstraint();
-    void translateConstraint();
 
     //Draw
     virtual void onDraw(Graphic *g);
@@ -106,6 +103,8 @@ protected:
     std::vector<Pin> pins;
     std::vector<Link*> links;
     std::vector<TranslationConstraint> t_constraints;
+
+    //Points player can interact with
     std::vector<int> selectable;
 };
 

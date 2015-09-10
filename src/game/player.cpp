@@ -20,7 +20,7 @@ Player::Player(Camera* c, float height): Entity()
     _r=false; //up
     _f=false; //down
 
-    _shape = new Ellipsoid(Vector3(0,0,0), Vector3(.7,.7,.7));
+    _shape = new Ellipsoid(Vector3(0,0,0), Vector3(.5,.5,.5));
 }
 
 Player::~Player()

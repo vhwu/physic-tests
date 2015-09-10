@@ -137,15 +137,22 @@ void Cloth::triangulate(int a, int b, int c){
     _triangles.push_back(t);
 }
 
-void Cloth::pinCorner(int c){
+int Cloth::getCorner(int c){
     if(c==0)
-        createPin(0);
-    if(c==1)
-        createPin(col-1);
-    if(c==2)
-        createPin(row*(col-1));
-    if(c==3)
-        createPin(row*(col-1)+(col-1));
+        return 0;
+    else if(c==1)
+        return col-1;
+    else if(c==2)
+        return row*col-col;
+    else
+        return row*col-1;
+}
+
+void Cloth::pinCorners(){
+    this->createPin(getCorner(0));
+    this->createPin(getCorner(1));
+    this->createPin(getCorner(2));
+    this->createPin(getCorner(3));
 }
 
 Cloth::~Cloth()

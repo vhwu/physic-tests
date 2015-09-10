@@ -23,14 +23,14 @@ void CollectibleManager::onTick(float seconds){
         c->onTick(seconds);
 
         //If it hasn't been collected, try to collect it
-        if(!c->collect()){
+        if(!c->getCollect()){
             Vector3 distance = focalPos-c->getPos();
             if(distance.length()<c->range){
                 c->onCollect(focal);
             }
         }
 
-        if(c->remove())
+        if(c->getRemove())
             collectibles.erase(collectibles.begin()+i);
     }
 }

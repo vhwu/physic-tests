@@ -6,6 +6,10 @@
 
 class Entity;
 class Collectible;
+
+//Manages collectibles.
+//Triggers onCollect for each (if !toCollect) when Entity is in range, and
+//removes them (if onRemove)
 class CollectibleManager: public Manager
 {
 public:

@@ -4,8 +4,8 @@
 
 
 Collectible::Collectible():
-      toCollect(false),
-      toRemove(false)
+      collect(false),
+      remove(false)
 {
 }
 
@@ -20,8 +20,8 @@ void Collectible::onTick(float )
 
 void Collectible::onCollect(Entity* )
 {
-    toCollect = true;
-    toRemove = true;
+    collect = true;
+    remove = true;
 }
 
 void Collectible::onDraw(Graphic* g){

@@ -4,6 +4,8 @@
 #include "verlet.h"
 
 class Graphic;
+
+//Constraint which limits point's movement to a specified axis within a range (min-max)
 class TranslationConstraint
 {
 public:
@@ -13,9 +15,12 @@ public:
     virtual ~TranslationConstraint();
 
     void constrain();
+    //Visualizes range of constraint
     void onDraw(Graphic* g);
 private:
+    //Returns value clamped within range (min-max)
     float clamp(float value);
+    //Given a possible value for the movable axis, returns a valid point
     Vector3 matchAxis(float value);
 
     Axis axis;

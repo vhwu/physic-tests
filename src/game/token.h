@@ -4,6 +4,8 @@
 #include "engine/common/collectible.h"
 
 class Entity;
+
+//Collectible that changes color and is drawn to target Entity after being collected
 class Token: public Collectible
 {
 public:

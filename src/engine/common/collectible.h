@@ -6,6 +6,8 @@
 
 class Shape;
 class Entity;
+
+//Represents a collectible object
 class Collectible
 {
 public:
@@ -14,16 +16,20 @@ public:
 
     virtual void onTick(float seconds);
     virtual void onDraw(Graphic* g);
+    //Called when Collectible is in range of Entity.
+    //Default: sets collect + remove to true
     virtual void onCollect(Entity* e);
 
     Vector3 getPos(){return shape->getPos();}
-    bool remove(){return toRemove;}
-    bool collect(){return toCollect;}
+    bool getRemove(){return remove;}
+    bool getCollect(){return collect;}
 
-    float range; //how far entity has to be to collect this
+    float range; //how far away Entity has to be to collect Collectible
 protected:
-    bool toCollect;
-    bool toRemove;
+    //Set to true after onCollect() is triggered
+    bool collect;
+    //Set to true when Collectible should be removed by its manager
+    bool remove;
     Shape* shape;
 };
 

@@ -22,29 +22,31 @@ VerletTest1::VerletTest1(Screen *s): World(s)
 
     //VERLETS
     Cloth* start = new Cloth(Vector2(12,12), .3, Vector3(0,0,0), Y, _manager);
-    start->pinCorner(0); start->pinCorner(1); start->pinCorner(2); start->pinCorner(3);
+    start->pinCorners();
     Cloth* end = new Cloth(Vector2(12,12), .3, Vector3(-26,4,0), Y, _manager);
-    end->pinCorner(0); end->pinCorner(1); end->pinCorner(2); end->pinCorner(3);
+    end->pinCorners();
     _manager->addVerlet(end);
     _manager->addVerlet(start);
 
     Cloth* c1 = new Cloth(Vector2(12,90), .3, Vector3(-3.5,0,0), Y, _manager);
-    c1->createTranslate(0,  Y, 5);
+    //Offset further two corners, to give cloth some slack
+    std::cout<<c1->getCorner(2)<<std::endl;
+    Vector3 test1 = c1->getPoint(c1->getCorner(2));
+    Vector3 test2 = c1->getPoint(c1->getCorner(3));
+    c1->setPos(c1->getCorner(2),Vector3(-25,test1.y,test1.z));
+    c1->setPos(c1->getCorner(3),Vector3(-25,test2.y,test2.z));
+
+    //Constrain corners to translation on y-axis
+    c1->createTranslate(c1->getCorner(0),  Y, 5);
+    c1->createTranslate(c1->getCorner(1),  Y, 5);
+    c1->createTranslate(c1->getCorner(2),  Y, 5);
+    c1->createTranslate(c1->getCorner(3),  Y, 5);
+
+    //Create player-controlled constraint
     c1->createTranslate(6,  Y, 5);
-    c1->createTranslate(11,  Y, 5);
-
-    Vector3 test1 = c1->getPoint(1079);
-    Vector3 test2 = c1->getPoint(1068);
-
-    c1->setPos(1079,Vector3(-25,test1.y,test1.z));
-    c1->setPos(1068,Vector3(-25,test2.y,test2.z));
-
-    c1->createTranslate(1079,  Y, 5);
-    c1->createTranslate(1068,  Y, 5);
     c1->addSelect(6);
 
     _manager->addVerlet(c1);
-
 
     //COLLECTIBLES
     CollectibleManager* cm = new CollectibleManager(_player);
@@ -79,7 +81,6 @@ VerletTest1::VerletTest1(Screen *s): World(s)
     cm->addCollectible(token14);
     cm->addCollectible(token15);
     cm->addCollectible(token16);
-
 
     //Raytracing while toggling between stationary + moveable mouse
     if(mouseMove)
@@ -138,7 +139,7 @@ void VerletTest1::onDraw(Graphic *g){
                      Vector3(.1,.1,.1));
     }
     else if(hit.hit){
-        //draw point that's being hovered in yellow
+        //draw point that's being hovered in green if it's selectable, yellow if not
         if(hit.v->canSelect(hit.id))
             g->setColor(Vector3(0,1,0));
         else

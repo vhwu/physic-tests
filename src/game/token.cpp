@@ -19,7 +19,7 @@ Token::~Token()
 void Token::onTick(float seconds)
 {
     //Follows player after being collected
-    if(toCollect){
+    if(collect){
         Vector3 currentPos = shape->getPos();
         Vector3 interpolate = Vector3::lerp(currentPos, target->getPos(), 1 - powf(0.08, seconds));
         shape->setPos(interpolate);
@@ -27,12 +27,12 @@ void Token::onTick(float seconds)
     //Removed once it's close to the player
     Vector3 distance = shape->getPos()-target->getPos();
     if(distance.lengthSquared()<.5)
-        toRemove = true;
+        remove = true;
 }
 
 void Token::onDraw(Graphic* g){
     //Changes color when it's collected
-    if(toCollect)
+    if(collect)
         g->setColor(Vector3(1,0,0));
     else
         g->setColor(Vector3(1,1,1));
@@ -41,6 +41,6 @@ void Token::onDraw(Graphic* g){
 
 void Token::onCollect(Entity* )
 {
-      toCollect = true;
+      collect = true;
 }
 
