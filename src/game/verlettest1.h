@@ -40,6 +40,7 @@ private:
     Player* _player;
     float _height;
     VerletManager* _manager;
+    Vector3 _startPos;
 };
 
 #endif // VERLETTEST1_H

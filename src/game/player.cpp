@@ -11,7 +11,7 @@ Player::Player(Camera* c, float height): Entity()
 
     _goal =7; //4;
     _dampen = .95f;
-    _jumpVel = 4;
+    _jumpVel = 6;
 
     _w=false;
     _a=false;
@@ -48,7 +48,7 @@ void Player::onTick(float seconds)
 
     Entity::onTick(seconds);
 
-    this->move(this->_toMove);
+    //this->move(this->_toMove);
 }
 
 void Player::onCollide(Entity *e, const Vector3& mtv){
@@ -59,6 +59,12 @@ void Player::move(const Vector3& translate){
     _shape->translate(translate);
     _camera->moveTo(_shape->getPos()+Vector3(0,_playerHeight,0));
     _toMove = Vector3(0,0,0);
+}
+
+void Player::resetPos(const Vector3& pos){
+    setPos(pos);
+    setVel(Vector3(0,0,0));
+    setAcc(Vector3(0,0,0));
 }
 
 

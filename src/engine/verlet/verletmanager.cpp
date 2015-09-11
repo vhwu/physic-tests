@@ -17,10 +17,14 @@ VerletManager::~VerletManager()
     verlets.clear();
 }
 
-bool VerletManager::rayTrace(RayTracer* ray, HitTest &result){
+bool VerletManager::rayTrace(RayTracer* ray, HitTest &result, bool selectable){
     HitTest temp;
     for(Verlet * v: verlets){
-        bool hit = ray->hitVerlet(v,temp);
+        bool hit;
+        if(selectable)
+            hit = ray->hitVerlet(v,v->getSelectable(),temp);
+        else
+            hit = ray->hitVerlet(v,temp);
         if(hit&&(temp.t<result.t))
             result = temp;
     }
@@ -41,6 +45,7 @@ void VerletManager::constraints(){
     for(Verlet * v: verlets){
         v->linkConstraint();
         v->pinConstraint();
+        v->translateConstraint();
     }
 }
 */
@@ -57,13 +62,13 @@ void VerletManager::onTick(float seconds){
             }
             v->onTick(seconds);
         }
-        /*
-        verlet(seconds);
-        for(int i=0; i<_numSolves; i++)
-            constraints();
-        for(int i=0; i<verlets.size(); i++)
-            verlets.at(i)->onTick(seconds);
-            */
+
+//        verlet(seconds);
+//        for(int i=0; i<_numSolves; i++)
+//            constraints();
+//        for(int i=0; i<verlets.size(); i++)
+//            verlets.at(i)->onTick(seconds);
+
     }
 }
 
@@ -73,7 +78,8 @@ void VerletManager::onDraw(Graphic *g){
 }
 
 Vector3 VerletManager::collideTerrain(Entity* e){
+    Vector3 mtv = Vector3(0,0,0);
     for(Verlet * v: verlets)
-        v->collide(e);
-    return Vector3(0,0,0);
+        mtv += v->collide(e);
+    return mtv;
 }

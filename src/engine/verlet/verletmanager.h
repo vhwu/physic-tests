@@ -22,7 +22,7 @@ public:
     Verlet* getVerlet(int i){return verlets[i];}
 
     Vector3 collideTerrain(Entity* e);
-    bool rayTrace(RayTracer* ray, HitTest &result);
+    bool rayTrace(RayTracer* ray, HitTest &result, bool selectable=false);
 
     //Settings
     //Vector3 gravity = Vector3(0,-1.5,0);

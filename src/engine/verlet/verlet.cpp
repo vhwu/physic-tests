@@ -105,13 +105,11 @@ void Verlet::calculate(Tri* t){
 Vector3 Verlet::collide(Entity *e){
     Ellipsoid* el = e->getEllipsoid();
     Vector3 toMove = e->getMove();
+
     Vector3 center = el->getPos()+toMove;
     float radius = e->getDim().x;
     //determines whether to move points themselves
     bool solve = _manager->solve;
-    //if player is on ground (geometric collision), verlet won't influence it
-    bool hitGeo = false;
-    //bool hitGeo = e->getMtv()!=Vector3(0,0,0);
 
     float count = 0;  //how many points hit
     Vector3 translation = Vector3(0,0,0); //accumulative mtv
@@ -128,25 +126,21 @@ Vector3 Verlet::collide(Entity *e){
             float factor = dist.length()-radius;
             Vector3 extra = unit*factor;
 
-            if(solve&&!hitGeo)
+            if(solve)
                 _pos[i]=_pos[i]-(extra*sphereInfluence);
-            else if(solve)  //give extra allowance if sphere won't move
-                _pos[i]=_pos[i]-(extra*sphereInfluence*2);
-
             translation+=extra;
         }
      }
+
     if(count>0){
         //lower = jittery, higher = doesn't compensate for collisions
         count *= .5;
         translation/=count; //divide accumulative mtv by points hit
     }
-    if(!hitGeo||!solve){  //sphere can be moved by points
-        toMove+=translation;
-        e->setMove(toMove);
-        e->setMtv(translation);
-    }
-    return Vector3(0,0,0);
+
+    toMove+=translation;
+    e->setMove(toMove);
+    return translation;
 }
 
 //***************************constraints*****************************//

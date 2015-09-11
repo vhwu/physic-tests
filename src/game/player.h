@@ -30,6 +30,8 @@ public:
     void move(const Vector3& translate);
     void onCollide(Entity *e, const Vector3 &mtv);
 
+    //Sets player position and cancels out any velocity/ acceleration
+    void resetPos(const Vector3 &pos);
 private:
     Camera* _camera;
     float _playerHeight;

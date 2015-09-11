@@ -8,13 +8,19 @@
 #include "token.h"
 #include "engine/common/collectiblemanager.h"
 
-VerletTest1::VerletTest1(Screen *s): World(s)
+
+//Controls:
+//U: move player back to starting positions
+//F: freeze
+
+VerletTest1::VerletTest1(Screen *s): World(s),
+    _height(3),
+    _startPos(Vector3(-1,3,-1))
 {
-    _height = 3;
     _camera = new Camera(Vector2(800, 600), false);
 
     _player = new Player(_camera,_height);
-    _player->setPos(Vector3(-1,3,-1));
+    _player->setPos(_startPos);
     this->addEntity(_player);
 
     _manager = new VerletManager();
@@ -96,7 +102,7 @@ VerletTest1::~VerletTest1()
 
 void VerletTest1::onTick(float seconds){
     //verlet collisions: offset player if not colliding with ground
-    _manager->collideTerrain(_player);
+    _player->setMtv(_manager->collideTerrain(_player));
     _player->move(_player->getMove());
 
     //raytrace to find hovered point
@@ -109,7 +115,7 @@ void VerletTest1::onTick(float seconds){
     }
 
     HitTest trace;
-    _manager->rayTrace(_ray, trace);
+    _manager->rayTrace(_ray, trace, true);
     hit = trace;
 
     //dragging
@@ -180,6 +186,8 @@ void VerletTest1::keyPressEvent(QKeyEvent *event){
     World::keyPressEvent(event);
     if(event->key() == Qt::Key_F)
         _manager->enableSolve();
+    if(event->key() == Qt::Key_U)
+        _player->resetPos(_startPos);
     _player->keyPressEvent(event);
 }
 

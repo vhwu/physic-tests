@@ -41,10 +41,11 @@ public:
     static const int NUM = 5000;
     //between 0 and 1: how much cloth is influenced by collisions
     float sphereInfluence = 1;
-    Vector3 rayTraceSize = Vector3(.2,.2,.2);
+    Vector3 rayTraceSize = Vector3(.5,.5,.5);
 
     int getSize(){return numPoints;}
     Vector3 getPoint(const int& id){return _pos[id];}
+    QList<int> getSelectable(){return selectable;}
     //Sets point at specified index to given pos
     void setPos(int index, const Vector3& pos);
 
@@ -105,7 +106,7 @@ protected:
     std::vector<TranslationConstraint> t_constraints;
 
     //Points player can interact with
-    std::vector<int> selectable;
+    QList<int> selectable;
 };
 
 #endif // VERLET_H
