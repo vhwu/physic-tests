@@ -41,6 +41,8 @@ private:
     float _height;
     VerletManager* _manager;
     Vector3 _startPos;
+
+    float _mouseSpeed;
 };
 
 #endif // VERLETTEST1_H

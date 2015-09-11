@@ -15,7 +15,8 @@
 
 VerletTest1::VerletTest1(Screen *s): World(s),
     _height(3),
-    _startPos(Vector3(-1,3,-1))
+    _startPos(Vector3(-1,3,-1)),
+    _mouseSpeed(0.12)
 {
     _camera = new Camera(Vector2(800, 600), false);
 
@@ -43,14 +44,39 @@ VerletTest1::VerletTest1(Screen *s): World(s),
     c1->setPos(c1->getCorner(3),Vector3(-25,test2.y,test2.z));
 
     //Constrain corners to translation on y-axis
-    c1->createTranslate(c1->getCorner(0),  Y, 5);
-    c1->createTranslate(c1->getCorner(1),  Y, 5);
-    c1->createTranslate(c1->getCorner(2),  Y, 5);
-    c1->createTranslate(c1->getCorner(3),  Y, 5);
+    c1->createTranslate(c1->getCorner(0),  Y, 4);
+    c1->createTranslate(c1->getCorner(1),  Y, 6);
+    c1->createTranslate(c1->getCorner(2),  Y, 6);
+    c1->createTranslate(c1->getCorner(3),  Y, 4);
 
     //Create player-controlled constraint
     c1->createTranslate(6,  Y, 5);
     c1->addSelect(6);
+
+//    Cloth* start = new Cloth(Vector2(12,12), .3, Vector3(0,0,0), Y, _manager);
+//    start->pinCorners();
+//    Cloth* end = new Cloth(Vector2(12,12), .3, Vector3(-26,4,0), Y, _manager);
+//    end->pinCorners();
+//    _manager->addVerlet(end);
+//    _manager->addVerlet(start);
+
+//    Cloth* c1 = new Cloth(Vector2(12,90), .3, Vector3(-3.5,0,0), Z, _manager);
+//    //Offset further two corners, to give cloth some slack
+//    std::cout<<c1->getCorner(2)<<std::endl;
+//    //Vector3 test1 = c1->getPoint(c1->getCorner(2));
+//    //Vector3 test2 = c1->getPoint(c1->getCorner(3));
+//    //c1->setPos(c1->getCorner(2),Vector3(-25,test1.y,test1.z));
+//    //c1->setPos(c1->getCorner(3),Vector3(-25,test2.y,test2.z));
+
+//    //Constrain corners to translation on y-axis
+//    c1->createTranslate(c1->getCorner(0),  Z, 5);
+//    c1->createTranslate(c1->getCorner(1),  Z, 5);
+//    c1->createTranslate(c1->getCorner(2),  Z, 5);
+//    c1->createTranslate(c1->getCorner(3),  Z, 5);
+
+//    //Create player-controlled constraint
+//    c1->createTranslate(6,  Z, 5);
+//    c1->addSelect(6);
 
     _manager->addVerlet(c1);
 
@@ -119,11 +145,12 @@ void VerletTest1::onTick(float seconds){
     hit = trace;
 
     //dragging
-    if(dragMode){
+    if(dragMode&&_manager->solve){
         draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),-1*_camera->getLook());
-        interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(0.01, seconds));
+        interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(_mouseSpeed, seconds));
         draggedVerlet->setPos(draggedPoint,interpolate);
     }
+
     //update verlet
     World::onTick(seconds);
 }
