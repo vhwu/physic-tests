@@ -8,6 +8,7 @@
 class Triangle;
 class Ellipsoid;
 class Verlet;
+class Constraint;
 
 struct HitTest
 {
@@ -17,6 +18,7 @@ struct HitTest
     int id;  //for verlet collisions: point hit
     Triangle* tri; //for triangle + mesh collisions
     Verlet* v;  //for verlet collisions
+    Constraint* c;  //for constraint collisions
 
     HitTest() : hit(false), t(INFINITY), id(-1), tri(NULL), v(NULL) {}
     HitTest(bool h, float f, Triangle* tr){hit = h; t=f; tri=tr;}
@@ -52,6 +54,8 @@ public:
     bool hitMesh(std::vector<Triangle> t, HitTest &result);
     bool hitVerlet(Verlet* t, HitTest &result);
     bool hitVerlet(Verlet* t, QList<int> points, HitTest &result);
+    bool hitConstraint(Constraint* c, HitTest &result);
+
 private:
     //For cursor ray: returns direction for ray directly to screen coordinate
     Vector3 getRayForPixel(int x, int y) const;

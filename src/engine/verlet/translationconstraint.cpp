@@ -1,7 +1,8 @@
 #include "translationconstraint.h"
 #include "engine/common/graphic.h"
 
-TranslationConstraint::TranslationConstraint(int i, Axis a, float _min, float _max, Verlet *verlet)
+TranslationConstraint::TranslationConstraint(int i, Axis a, float _min, float _max, Verlet *verlet, bool s):
+    Constraint(i,a,verlet,s)
 {
     index = i;
     axis = a;
@@ -11,7 +12,9 @@ TranslationConstraint::TranslationConstraint(int i, Axis a, float _min, float _m
     pinPos= v->getPoint(index);
 }
 
-TranslationConstraint::TranslationConstraint(int i, Axis a, float range, Verlet* verlet){
+TranslationConstraint::TranslationConstraint(int i, Axis a, float range, Verlet* verlet, bool s):
+    Constraint(i,a,verlet,s)
+{
     index = i;
     axis = a;
     v = verlet;
@@ -59,10 +62,16 @@ Vector3 TranslationConstraint::matchAxis(float value){
 }
 
 void TranslationConstraint::onDraw(Graphic* g){
-    g->setColor(Vector4(1,1,1,.5));
-    g->transform(&Graphic::drawUnitSphere,v->getPoint(index),0,
-        Vector3(.15,.15,.15));
-    g->drawGradientLine(Vector3(1,0,0),Vector3(0,1,0),matchAxis(max),matchAxis(min));
+    //Range: gray if unselectable, green if selectable
+    if(selectable){
+        g->setColor(Vector3(0,1,0));
+        g->drawLine(matchAxis(max),matchAxis(min));
+    }
+    else{
+        g->setColor(Vector3(.5,.5,.5));
+        g->drawLine(matchAxis(max),matchAxis(min));
+    }
+    Constraint::onDraw(g);
 }
 
 TranslationConstraint::~TranslationConstraint()

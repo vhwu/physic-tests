@@ -2,6 +2,8 @@
 #include "ellipsoid.h"
 #include "engine/geometric/triangle.h"
 #include "engine/verlet/verlet.h"
+#include "engine/verlet/constraint.h"
+
 #include <qgl.h>
 #if defined(__APPLE__) || defined(MACOSX)
     #include <OpenGL/glu.h>
@@ -202,6 +204,18 @@ bool RayTracer::hitVerlet(Verlet* verlet, QList<int> points, HitTest &result){
     if(h)
         result.v = verlet;
     return h;
+}
+
+bool RayTracer::hitConstraint(Constraint *c, HitTest &result){
+    int index = c->getIndex();
+    Verlet* v = c->getVerlet();
+    Vector3 pos = v->getPoint(index);
+    bool hit = hitEllipsoid(pos,v->rayTraceSize,index,result);
+    if(hit){
+        result.v = v;
+        result.c = c;
+    }
+    return hit;
 }
 
 

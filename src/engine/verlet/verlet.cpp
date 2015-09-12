@@ -39,9 +39,10 @@ void Verlet::createPin(int index){
     pins.push_back(p);
 }
 
-void Verlet::createTranslate(int index, Axis a, float range){
-    TranslationConstraint t = TranslationConstraint(index,a,range,this);
-    t_constraints.push_back(t);
+TranslationConstraint* Verlet::createTranslate(int index, Axis a, float range, bool s){
+    TranslationConstraint* t = new TranslationConstraint(index,a,range,this,s);
+    constraints.push_back(t);
+    return t;
 }
 
 Link* Verlet::createLink(int a, int b){
@@ -74,8 +75,8 @@ void Verlet::onDraw(Graphic *g){
     g->setLineWidth(1);
     foreach(Link* l, links)
         drawLink(l,g);
-    foreach(TranslationConstraint t, t_constraints)
-        t.onDraw(g);
+//    foreach(TranslationConstraint t, constraints)
+//        t.onDraw(g);
 }
 
 void Verlet::drawLink(Link *l, Graphic *g){
@@ -164,6 +165,6 @@ void Verlet::linkConstraint(){
 }
 
 void Verlet::translateConstraint(){
-     for(TranslationConstraint t: t_constraints)
-        t.constrain();
+     for(TranslationConstraint* t: constraints)
+        t->constrain();
 }

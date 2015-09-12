@@ -6,6 +6,8 @@
 
 class Player;
 class VerletManager;
+class ConstraintManager;
+class Constraint;
 class VerletTest1:  public World
 {
 public:
@@ -34,12 +36,14 @@ public:
     //For moving the selected point
     //World-space pt: where cursor's ray intersects w/ draggedPoint's plane
     Vector3 draggedMouse;
+    Constraint* draggedConstraint;
     //from draggedPoint to draggedMouse
     Vector3 interpolate;
 private:
     Player* _player;
     float _height;
     VerletManager* _manager;
+    ConstraintManager* _cManager;
     Vector3 _startPos;
 
     float _mouseSpeed;

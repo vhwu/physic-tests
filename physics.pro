@@ -53,7 +53,9 @@ SOURCES += \
     src/engine/common/collectiblemanager.cpp \
     src/engine/common/collectible.cpp \
     src/game/token.cpp \
-    src/engine/verlet/translationconstraint.cpp
+    src/engine/verlet/translationconstraint.cpp \
+    src/engine/verlet/constraint.cpp \
+    src/engine/verlet/constraintmanager.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -88,7 +90,9 @@ HEADERS += \
     src/engine/common/collectiblemanager.h \
     src/engine/common/collectible.h \
     src/game/token.h \
-    src/engine/verlet/translationconstraint.h
+    src/engine/verlet/translationconstraint.h \
+    src/engine/verlet/constraint.h \
+    src/engine/verlet/constraintmanager.h
 
 
 FORMS += src/mainwindow.ui

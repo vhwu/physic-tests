@@ -17,14 +17,10 @@ VerletManager::~VerletManager()
     verlets.clear();
 }
 
-bool VerletManager::rayTrace(RayTracer* ray, HitTest &result, bool selectable){
+bool VerletManager::rayTrace(RayTracer* ray, HitTest &result){
     HitTest temp;
     for(Verlet * v: verlets){
-        bool hit;
-        if(selectable)
-            hit = ray->hitVerlet(v,v->getSelectable(),temp);
-        else
-            hit = ray->hitVerlet(v,temp);
+        bool hit = ray->hitVerlet(v,temp);
         if(hit&&(temp.t<result.t))
             result = temp;
     }

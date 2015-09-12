@@ -13,6 +13,7 @@ class GeometricManager;
 class Graphic;
 class Entity;
 class TranslationConstraint;
+class Constraint;
 
 enum Axis
 {
@@ -45,26 +46,17 @@ public:
 
     int getSize(){return numPoints;}
     Vector3 getPoint(const int& id){return _pos[id];}
-    QList<int> getSelectable(){return selectable;}
     //Sets point at specified index to given pos
     void setPos(int index, const Vector3& pos);
 
     //CONSTRAINTS
     //Creation
     void createPin(int index); //Fix point at specified index to its _pos
-    void createTranslate(int index, Axis a, float range); //Fix point at specified index to a range within one axis
+    TranslationConstraint *createTranslate(int index, Axis a, float range, bool s=0); //Fix point at specified index to a range within one axis
     //Solving
     void linkConstraint();
     void pinConstraint();
     void translateConstraint();
-
-    //SELECTION
-    void addSelect(int index){
-        selectable.push_back(index);
-    }
-    bool canSelect(int index){
-        return (std::find(selectable.begin(), selectable.end(), index) != selectable.end());
-    }
 
     //Update
     virtual void onTick(float seconds);
@@ -103,10 +95,7 @@ protected:
     }Pin;
     std::vector<Pin> pins;
     std::vector<Link*> links;
-    std::vector<TranslationConstraint> t_constraints;
-
-    //Points player can interact with
-    QList<int> selectable;
+    std::vector<TranslationConstraint*> constraints;
 };
 
 #endif // VERLET_H
