@@ -7,18 +7,13 @@
 #include <QHash>
 #include <QPair>
 #include "engine/common/graphic.h"
+#include "engine/common/axis.h"
 
 class VerletManager;
 class GeometricManager;
 class Graphic;
 class Entity;
-class TranslationConstraint;
-class Constraint;
 
-enum Axis
-{
-    X, Y, Z
-};
 struct Tri
 {
     int a, b, c;
@@ -52,11 +47,9 @@ public:
     //CONSTRAINTS
     //Creation
     void createPin(int index); //Fix point at specified index to its _pos
-    TranslationConstraint *createTranslate(int index, Axis a, float range, bool s=0); //Fix point at specified index to a range within one axis
     //Solving
     void linkConstraint();
     void pinConstraint();
-    void translateConstraint();
 
     //Update
     virtual void onTick(float seconds);
@@ -95,7 +88,6 @@ protected:
     }Pin;
     std::vector<Pin> pins;
     std::vector<Link*> links;
-    std::vector<TranslationConstraint*> constraints;
 };
 
 #endif // VERLET_H

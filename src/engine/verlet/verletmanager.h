@@ -9,10 +9,11 @@
 #include "engine/common/raytracer.h"
 
 class Ellipsoid;
+class ConstraintManager;
 class VerletManager: public Manager
 {
 public:
-    VerletManager();
+    VerletManager(ConstraintManager* cm);
     ~VerletManager();
 
     void onTick(float seconds);
@@ -33,12 +34,13 @@ public:
 private:
     //Verlet objects manager maintains
     std::vector<Verlet*> verlets;
-
+    //Handles the constraints for the verlets
+    ConstraintManager* _constraintManager;
     //Helpers for onTick, to cycle through each step
     //Updates positions of all points w/ velocity + acc
-    //void verlet(float seconds);
-    //Adjusts positions to satisfy listed constraints
-    //void constraints();
+    void verlet(float seconds);
+    //Adjusts positions to satisfy listed constraints: linked and pin
+    void constraints();
 };
 
 #endif // VERLETMANAGER_H

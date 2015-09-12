@@ -3,6 +3,7 @@
 #include "vector.h"
 #include <QHash>
 #include <QString>
+#include "axis.h"
 
 class View;
 class GLUquadric;
@@ -62,6 +63,7 @@ public:
     void drawLine(const Vector3& a, const Vector3& b);
     void drawGradientLine(const Vector3& c1, const Vector3& c2,
                           const Vector3& a, const Vector3& b);
+    void drawCircle(Axis a, float radius, const Vector3& center);
 
 protected:
     View* _view;

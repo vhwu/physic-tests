@@ -2,6 +2,7 @@
 #include "engine/common/screen.h"
 #include "view.h"
 #include "verlettest1.h"
+#include "verlettest2.h"
 #include "engine/common/application.h"
 
 #include <iostream>
@@ -14,8 +15,10 @@ GameScreen::GameScreen(View* v, Application* a): Screen(v, a)
 
 void GameScreen::create(int m){
     mode = m;
-    //_world = new VerletWorld(this);
-    _world = new VerletTest1(this);
+    if(mode==1)
+        _world = new VerletTest2(this);
+    else
+        _world = new VerletTest1(this);
 }
 
 GameScreen::~GameScreen()

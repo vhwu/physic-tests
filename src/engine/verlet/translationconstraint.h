@@ -1,10 +1,7 @@
 #ifndef TRANSLATIONCONSTRAINT_H
 #define TRANSLATIONCONSTRAINT_H
 
-#include "verlet.h"
 #include "constraint.h"
-
-class Graphic;
 
 //Constraint which limits point's movement to a specified axis within a range (min-max)
 class TranslationConstraint: public Constraint
@@ -16,8 +13,7 @@ public:
     virtual ~TranslationConstraint();
 
     void constrain();
-    //Visualizes range of constraint
-     void onDraw(Graphic* g);
+     void onDraw(Graphic* g);  //Visualizes range of constraint
 private:
     //Returns value clamped within range (min-max)
     float clamp(float value);

@@ -1,5 +1,5 @@
-#ifndef VERLETTEST1_H
-#define VERLETTEST1_H
+#ifndef VERLETTEST2_H
+#define VERLETTEST2_H
 
 #include "engine/common/world.h"
 #include "engine/common/raytracer.h"
@@ -9,11 +9,11 @@ class VerletManager;
 class ConstraintManager;
 class Constraint;
 
-class VerletTest1:  public World
+class VerletTest2:  public World
 {
 public:
-    VerletTest1(Screen* s);
-    virtual ~VerletTest1();
+    VerletTest2(Screen* s);
+    virtual ~VerletTest2();
 
     void onTick(float seconds);
     void onDraw(Graphic *g);
@@ -50,4 +50,4 @@ private:
     float _mouseSpeed;
 };
 
-#endif // VERLETTEST1_H
+#endif // VERLETTEST2_H

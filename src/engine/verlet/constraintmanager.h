@@ -14,6 +14,7 @@ public:
 
     void onTick(float seconds);
     void onDraw(Graphic *g);
+    void solveConstraints();
 
     void addConstraint(Constraint *c);
     //Raytraces points for all constraints, and returns whether there was a hit

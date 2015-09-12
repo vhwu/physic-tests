@@ -1,4 +1,4 @@
-#include "verlettest1.h"
+#include "verlettest2.h"
 #include "engine/common/camera.h"
 #include "player.h"
 #include "engine/common/graphic.h"
@@ -7,14 +7,14 @@
 #include "engine/verlet/cloth.h"
 #include "engine/verlet/verlet.h"
 #include "engine/verlet/constraint.h"
-#include "engine/verlet/translationconstraint.h"
-#include "token.h"
-#include "engine/common/collectiblemanager.h"
+#include "engine/verlet/rotationconstraint.h"
+#include "engine/verlet/verletconstraint.h"
+
 
 //Controls:
 //U: move player back to starting positions
 //F: freeze
-VerletTest1::VerletTest1(Screen *s): World(s),
+VerletTest2::VerletTest2(Screen* s): World(s),
     _height(3),
     _startPos(Vector3(-1,3,-1)),
     _mouseSpeed(0.12)
@@ -30,54 +30,45 @@ VerletTest1::VerletTest1(Screen *s): World(s),
     this->addManager(_cManager);
     _manager = new VerletManager(_cManager);
     this->addManager(_manager);
-    CollectibleManager* cm = new CollectibleManager(_player);
-    this->addManager(cm);
+    //Allow for gravity
+    _manager->gravity = Vector3(0,-1.5,0);
 
     //VERLETS
+    float yOffset = -3;
+    float centerOffset = 1.2;
+    float triSize = .3;
+    float clothWidth = 9;
+    float clothLength = 20;
+    float radius = 2;
+    float r2 = 2; //2.3 for constraints- have them at corners, not center of cloth
+
     Cloth* start = new Cloth(Vector2(12,12), .3, Vector3(0,0,0), Y, _manager);
     start->pinCorners();
-    Cloth* end = new Cloth(Vector2(12,12), .3, Vector3(-26,4,0), Y, _manager);
-    end->pinCorners();
-    _manager->addVerlet(end);
     _manager->addVerlet(start);
 
-    Cloth* c1 = new Cloth(Vector2(12,90), .3, Vector3(-3.5,0,0), Y, _manager);
-    //Offset further two corners, to give cloth some slack
-    Vector3 test1 = c1->getPoint(c1->getCorner(2));
-    Vector3 test2 = c1->getPoint(c1->getCorner(3));
-    c1->setPos(c1->getCorner(2),Vector3(-25,test1.y,test1.z));
-    c1->setPos(c1->getCorner(3),Vector3(-25,test2.y,test2.z));
+    Cloth* c1 = new Cloth(Vector2(clothWidth,clothLength), triSize, Vector3(-radius,yOffset,centerOffset), Y, _manager);
     _manager->addVerlet(c1);
+    _cManager->addConstraint(new RotationConstraint(4, Y, c1->getPoint(4)+Vector3(radius,0,0),r2,c1,true));
+    Cloth* c2 = new Cloth(Vector2(clothWidth,clothLength), -triSize, Vector3(radius,yOffset,-centerOffset), Y, _manager);
+    _manager->addVerlet(c2);
+    //Note: index 80 by averaging corner 0 (80) and 2 (160)
+    _cManager->addConstraint(new RotationConstraint(4, Y, c2->getPoint(4)+Vector3(-radius,0,0),r2,c2,true));
+    Cloth* c3 = new Cloth(Vector2(clothLength,clothWidth), triSize, Vector3(centerOffset-triSize/2.0,yOffset,-radius), Y, _manager);
+    _manager->addVerlet(c3);
+    _cManager->addConstraint(new RotationConstraint(80, Y, c3->getPoint(80)+Vector3(0,0,radius),r2,c3,true));
+    Cloth* c4 = new Cloth(Vector2(clothLength,clothWidth), -triSize, Vector3(-centerOffset+triSize/2.0,yOffset,radius), Y, _manager);
+    _manager->addVerlet(c4);
+    _cManager->addConstraint(new RotationConstraint(80, Y, c4->getPoint(80)+Vector3(0,0,-radius),r2,c4,true));
 
-    //CONSTRAINTS
-    //Constrain corners to translation on y-axis
-    _cManager->addConstraint(new TranslationConstraint(c1->getCorner(0), Y, 5, c1));
-    _cManager->addConstraint(new TranslationConstraint(c1->getCorner(1), Y, 5, c1));
-    _cManager->addConstraint(new TranslationConstraint(c1->getCorner(2), Y, 5, c1));
-    _cManager->addConstraint(new TranslationConstraint(c1->getCorner(3), Y, 5, c1));
-    //Create player-controlled constraint
-    _cManager->addConstraint(new TranslationConstraint(6, Y, 7, c1,true));
+    _cManager->addConstraint(new VerletConstraint(4,c1,80,c3));
+    _cManager->addConstraint(new VerletConstraint(4,c1,80,c4));
+    _cManager->addConstraint(new VerletConstraint(4,c2,80,c3));
+    _cManager->addConstraint(new VerletConstraint(4,c2,80,c4));
+    //Shear
+    _cManager->addConstraint(new VerletConstraint(4,c1,4,c2));
+    _cManager->addConstraint(new VerletConstraint(80,c4,80,c3));
 
-    //_cManager->addConstraint(new RotationConstraint(6, X, c1->getPoint(6)-Vector3(0,3,0), 3,c1,true));
 
-    //Testing rotation
-
-    //COLLECTIBLES
-    cm->addCollectible(new Token(Vector3(-4,-1,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-7,-2,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-10,-1,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-13,0,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-16,1,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-19,2,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-22,1,-1.5),_player));
-    //Randomly distributed
-    cm->addCollectible(new Token(Vector3(-2,-1.2,-1.3),_player));
-    cm->addCollectible(new Token(Vector3(-4,-0.3,-1.6),_player));
-    cm->addCollectible(new Token(Vector3(-11,.3,-1.4),_player));
-    cm->addCollectible(new Token(Vector3(-14,0.1,-1.8),_player));
-    cm->addCollectible(new Token(Vector3(-16,-.2,-1.2),_player));
-    cm->addCollectible(new Token(Vector3(-18,.14,-1.25),_player));
-    cm->addCollectible(new Token(Vector3(-21,1,-1.7),_player));
 
     //Raytracing while toggling between stationary + moveable mouse
     if(mouseMove)
@@ -86,12 +77,12 @@ VerletTest1::VerletTest1(Screen *s): World(s),
         _ray = new RayTracer(_camera->getPos(), _camera->getLook());
 }
 
-VerletTest1::~VerletTest1()
+VerletTest2::~VerletTest2()
 {
     delete _ray;
 }
 
-void VerletTest1::onTick(float seconds){
+void VerletTest2::onTick(float seconds){
     //verlet collisions: offset player if not colliding with ground
     _player->setMtv(_manager->collideTerrain(_player));
     _player->move(_player->getMove());
@@ -119,7 +110,7 @@ void VerletTest1::onTick(float seconds){
     World::onTick(seconds);
 }
 
-void VerletTest1::onDraw(Graphic *g){
+void VerletTest2::onDraw(Graphic *g){
     //VISUALIZATION
     //Interpolation
     if(dragMode){
@@ -136,7 +127,7 @@ void VerletTest1::onDraw(Graphic *g){
 }
 
 //Set if constraint is manipulated
-void VerletTest1::mousePressEvent(QMouseEvent *event){
+void VerletTest2::mousePressEvent(QMouseEvent *event){
     World::mousePressEvent(event);
     if(event->button() == Qt::LeftButton&& hit.hit){
         _cManager->setSelection(hit.c);
@@ -150,7 +141,7 @@ void VerletTest1::mousePressEvent(QMouseEvent *event){
 }
 
 //Set if constraint is hovered
-void VerletTest1::mouseMoveEvent(QMouseEvent *event){
+void VerletTest2::mouseMoveEvent(QMouseEvent *event){
     World::mouseMoveEvent(event);
     if(hit.hit)
         _cManager->setHover(hit.c);
@@ -159,7 +150,7 @@ void VerletTest1::mouseMoveEvent(QMouseEvent *event){
 }
 
 //Set if constraint is deselected
-void VerletTest1::mouseReleaseEvent(QMouseEvent *event){
+void VerletTest2::mouseReleaseEvent(QMouseEvent *event){
     World::mouseReleaseEvent(event);
     if(event->button() == Qt::LeftButton){
         dragMode = false;
@@ -168,13 +159,13 @@ void VerletTest1::mouseReleaseEvent(QMouseEvent *event){
 }
 
 //Camera zoom
-void VerletTest1::wheelEvent(QWheelEvent *event){
+void VerletTest2::wheelEvent(QWheelEvent *event){
     _camera->zoom(event->delta());
 }
 
 //F:freeze
 //U:reset player position
-void VerletTest1::keyPressEvent(QKeyEvent *event){
+void VerletTest2::keyPressEvent(QKeyEvent *event){
     World::keyPressEvent(event);
     if(event->key() == Qt::Key_F)
         _manager->enableSolve();
@@ -183,7 +174,6 @@ void VerletTest1::keyPressEvent(QKeyEvent *event){
     _player->keyPressEvent(event);
 }
 
-void VerletTest1::keyReleaseEvent(QKeyEvent *event){
+void VerletTest2::keyReleaseEvent(QKeyEvent *event){
      _player->keyReleaseEvent(event);
 }
-

@@ -55,7 +55,10 @@ SOURCES += \
     src/game/token.cpp \
     src/engine/verlet/translationconstraint.cpp \
     src/engine/verlet/constraint.cpp \
-    src/engine/verlet/constraintmanager.cpp
+    src/engine/verlet/constraintmanager.cpp \
+    src/engine/verlet/rotationconstraint.cpp \
+    src/game/verlettest2.cpp \
+    src/engine/verlet/verletconstraint.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -92,7 +95,11 @@ HEADERS += \
     src/game/token.h \
     src/engine/verlet/translationconstraint.h \
     src/engine/verlet/constraint.h \
-    src/engine/verlet/constraintmanager.h
+    src/engine/verlet/constraintmanager.h \
+    src/engine/verlet/rotationconstraint.h \
+    src/engine/common/axis.h \
+    src/game/verlettest2.h \
+    src/engine/verlet/verletconstraint.h
 
 
 FORMS += src/mainwindow.ui

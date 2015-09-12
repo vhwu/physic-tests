@@ -4,22 +4,15 @@
 TranslationConstraint::TranslationConstraint(int i, Axis a, float _min, float _max, Verlet *verlet, bool s):
     Constraint(i,a,verlet,s)
 {
-    index = i;
-    axis = a;
     min = _min;
     max = _max;
-    v = verlet;
     pinPos= v->getPoint(index);
 }
 
 TranslationConstraint::TranslationConstraint(int i, Axis a, float range, Verlet* verlet, bool s):
     Constraint(i,a,verlet,s)
 {
-    index = i;
-    axis = a;
-    v = verlet;
     pinPos= v->getPoint(index);
-
     float pos;
 
     if(axis==X)

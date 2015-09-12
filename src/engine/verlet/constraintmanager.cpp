@@ -23,6 +23,11 @@ void ConstraintManager::onTick(float seconds){
         c->onTick(seconds);
 }
 
+void ConstraintManager::solveConstraints(){
+    foreach(Constraint* c, constraints)
+        c->constrain();
+}
+
 void ConstraintManager::onDraw(Graphic* g){
     foreach(Constraint* c, constraints)
         c->onDraw(g);
@@ -38,7 +43,6 @@ bool ConstraintManager::rayTrace(RayTracer* ray, HitTest &result){
             result = temp;
     }
     return result.hit;
-    return false;
 }
 
 void ConstraintManager::setHover(Constraint *c){

@@ -3,11 +3,12 @@
 #include "engine/common/graphic.h"
 #include "engine/common/raytracer.h"
 #include "engine/common/entity.h"
-#include "engine/geometric/geometricmanager.h"
-#include "verletcube.h"
+#include "constraintmanager.h"
 
-VerletManager::VerletManager(): Manager()
-{}
+VerletManager::VerletManager(ConstraintManager *cm): Manager()
+{
+    _constraintManager = cm;
+}
 
 VerletManager::~VerletManager()
 {
@@ -31,7 +32,7 @@ void VerletManager::addVerlet(Verlet* v){
     verlets.push_back(v);
 }
 
-/*
+
 void VerletManager::verlet(float seconds){
     for(Verlet * v: verlets)
         v->verlet(seconds);
@@ -41,32 +42,31 @@ void VerletManager::constraints(){
     for(Verlet * v: verlets){
         v->linkConstraint();
         v->pinConstraint();
-        v->translateConstraint();
     }
 }
-*/
 
 void VerletManager::onTick(float seconds){
     if(solve){
 
-        foreach(Verlet* v, verlets){
+        verlet(seconds);
 
-            v->verlet(seconds);
-            for(int i=0; i<_numSolves; i++){
-                v->translateConstraint();
-                v->linkConstraint();
-                v->translateConstraint();
-                v->pinConstraint();
-            }
-            v->onTick(seconds);
+        for(int i=0; i<_numSolves; i++){
+            _constraintManager->solveConstraints();
+            constraints();
         }
+        _constraintManager->solveConstraints();
 
-//        verlet(seconds);
-//        for(int i=0; i<_numSolves; i++)
-//            constraints();
-//        for(int i=0; i<verlets.size(); i++)
-//            verlets.at(i)->onTick(seconds);
+        for(Verlet* v:verlets)
+            v->onTick(seconds);
 
+//        foreach(Verlet* v, verlets){
+//            v->verlet(seconds);
+//            for(int i=0; i<_numSolves; i++){
+//                v->linkConstraint();
+//                v->pinConstraint();
+//            }
+//            v->onTick(seconds);
+//        }
     }
 }
 

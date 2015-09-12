@@ -9,6 +9,8 @@
     #include <GL/glu.h>
 #endif
 
+const float DEG2RAD = 3.14159/180;
+
 Graphic::Graphic(View* v)
 {
     _view = v;
@@ -154,6 +156,22 @@ void Graphic::drawGradientLine(const Vector3& c1, const Vector3& c2,
     glVertex3f(a.x, a.y, a.z);
     setColor(c2);
     glVertex3f(b.x, b.y, b.z);
+    glEnd();
+}
+
+void Graphic::drawCircle(Axis a, float radius, const Vector3& center){
+    glBegin(GL_LINE_LOOP);
+    for (int i=0; i < 360; i++)
+    {
+        float degInRad = i*DEG2RAD;
+        //glVertex2f(cos(degInRad),sin(degInRad));  //unit circle
+        if(a==X)
+            glVertex3f(center.x,cos(degInRad)*radius+center.y,sin(degInRad)*radius+center.z);
+        else if(a==Y)
+            glVertex3f(cos(degInRad)*radius+center.x,center.y,sin(degInRad)*radius+center.z);
+        else
+            glVertex3f(cos(degInRad)*radius+center.x,sin(degInRad)*radius+center.y,center.z);
+    }
     glEnd();
 }
 
