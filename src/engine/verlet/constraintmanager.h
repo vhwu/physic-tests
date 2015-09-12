@@ -6,6 +6,9 @@
 #include <vector>
 
 class Constraint;
+
+//Manages constraints
+//Access to select/ deselect constraints
 class ConstraintManager: public Manager
 {
 public:

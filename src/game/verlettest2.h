@@ -1,15 +1,10 @@
 #ifndef VERLETTEST2_H
 #define VERLETTEST2_H
 
-#include "engine/common/world.h"
-#include "engine/common/raytracer.h"
+#include "verletlevel.h"
 
-class Player;
-class VerletManager;
-class ConstraintManager;
-class Constraint;
-
-class VerletTest2:  public World
+//For testing rotation constraints for centrifugal/ centripetal force
+class VerletTest2:  public VerletLevel
 {
 public:
     VerletTest2(Screen* s);
@@ -21,13 +16,6 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent *event);
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *event);
-
-    //For selection
-    HitTest hit;
-    RayTracer* _ray;
 
     //For dragging
     bool dragMode = false; //true if player selects point + holds LMB
@@ -40,14 +28,6 @@ public:
     Constraint* draggedConstraint;
     //from draggedPoint to draggedMouse
     Vector3 interpolate;
-private:
-    Player* _player;
-    float _height;
-    VerletManager* _manager;
-    ConstraintManager* _cManager;
-    Vector3 _startPos;
-
-    float _mouseSpeed;
 };
 
 #endif // VERLETTEST2_H

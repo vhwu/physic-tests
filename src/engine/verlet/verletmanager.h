@@ -34,12 +34,12 @@ public:
 private:
     //Verlet objects manager maintains
     std::vector<Verlet*> verlets;
-    //Handles the constraints for the verlets
+    //Handles the 'global' Constraints that user can manipulate
     ConstraintManager* _constraintManager;
     //Helpers for onTick, to cycle through each step
     //Updates positions of all points w/ velocity + acc
     void verlet(float seconds);
-    //Adjusts positions to satisfy listed constraints: linked and pin
+    //Adjusts positions to satisfy per-verlet constraints: linked and pin
     void constraints();
 };
 

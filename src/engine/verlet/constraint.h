@@ -20,7 +20,7 @@ public:
     void setHover(bool h){hovered=h;}
     void setSelect(bool s){selected=s;}
 
-    //void onHover(); //add sound effects later
+    //void onHover(); //add sound effects/ other activation effects later
     //void onSelect();
 protected:
     Verlet* v;

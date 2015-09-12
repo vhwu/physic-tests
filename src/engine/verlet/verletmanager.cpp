@@ -8,6 +8,8 @@
 VerletManager::VerletManager(ConstraintManager *cm): Manager()
 {
     _constraintManager = cm;
+    //verlets = std::vector<Verlet*>();
+    //std::cout<<"verlet manager create"<<std::endl;
 }
 
 VerletManager::~VerletManager()

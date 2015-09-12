@@ -11,7 +11,7 @@ public:
     virtual ~VerletConstraint();
 
     void constrain();
-    void onDraw(Graphic* g);  //Visualizes arc of constraint
+    void onDraw(Graphic* g);  //Visualizes link
 private:
     Verlet* v2;
     int index2;

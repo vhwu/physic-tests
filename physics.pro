@@ -58,7 +58,8 @@ SOURCES += \
     src/engine/verlet/constraintmanager.cpp \
     src/engine/verlet/rotationconstraint.cpp \
     src/game/verlettest2.cpp \
-    src/engine/verlet/verletconstraint.cpp
+    src/engine/verlet/verletconstraint.cpp \
+    src/game/verletlevel.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -99,7 +100,8 @@ HEADERS += \
     src/engine/verlet/rotationconstraint.h \
     src/engine/common/axis.h \
     src/game/verlettest2.h \
-    src/engine/verlet/verletconstraint.h
+    src/engine/verlet/verletconstraint.h \
+    src/game/verletlevel.h
 
 
 FORMS += src/mainwindow.ui

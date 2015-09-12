@@ -20,7 +20,7 @@ private:
     //Given a possible value for the movable axis, returns a valid point
     Vector3 matchAxis(float value);
 
-    Vector3 pinPos;
+    Vector3 pinPos; //Original position, to reference for 2 axis that don't change
     float min;
     float max;
 };

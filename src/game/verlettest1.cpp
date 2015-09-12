@@ -1,35 +1,10 @@
 #include "verlettest1.h"
-#include "engine/common/camera.h"
-#include "player.h"
-#include "engine/common/graphic.h"
-#include "engine/verlet/verletmanager.h"
-#include "engine/verlet/constraintmanager.h"
-#include "engine/verlet/cloth.h"
-#include "engine/verlet/verlet.h"
-#include "engine/verlet/constraint.h"
 #include "engine/verlet/translationconstraint.h"
 #include "token.h"
 #include "engine/common/collectiblemanager.h"
 
-//Controls:
-//U: move player back to starting positions
-//F: freeze
-VerletTest1::VerletTest1(Screen *s): World(s),
-    _height(3),
-    _startPos(Vector3(-1,3,-1)),
-    _mouseSpeed(0.12)
-{
-    _camera = new Camera(Vector2(800, 600), false);
-
-    _player = new Player(_camera,_height);
-    _player->setPos(_startPos);
-    this->addEntity(_player);
-
-    //MANAGERS
-    _cManager = new ConstraintManager();
-    this->addManager(_cManager);
-    _manager = new VerletManager(_cManager);
-    this->addManager(_manager);
+VerletTest1::VerletTest1(Screen *s): VerletLevel(s){
+    //MANAGERSs
     CollectibleManager* cm = new CollectibleManager(_player);
     this->addManager(cm);
 
@@ -58,10 +33,6 @@ VerletTest1::VerletTest1(Screen *s): World(s),
     //Create player-controlled constraint
     _cManager->addConstraint(new TranslationConstraint(6, Y, 7, c1,true));
 
-    //_cManager->addConstraint(new RotationConstraint(6, X, c1->getPoint(6)-Vector3(0,3,0), 3,c1,true));
-
-    //Testing rotation
-
     //COLLECTIBLES
     cm->addCollectible(new Token(Vector3(-4,-1,-1.5),_player));
     cm->addCollectible(new Token(Vector3(-7,-2,-1.5),_player));
@@ -78,45 +49,20 @@ VerletTest1::VerletTest1(Screen *s): World(s),
     cm->addCollectible(new Token(Vector3(-16,-.2,-1.2),_player));
     cm->addCollectible(new Token(Vector3(-18,.14,-1.25),_player));
     cm->addCollectible(new Token(Vector3(-21,1,-1.7),_player));
-
-    //Raytracing while toggling between stationary + moveable mouse
-    if(mouseMove)
-        _ray = new RayTracer(_camera->modelview, mouseX, mouseY);
-    else
-        _ray = new RayTracer(_camera->getPos(), _camera->getLook());
 }
 
 VerletTest1::~VerletTest1()
 {
-    delete _ray;
 }
 
 void VerletTest1::onTick(float seconds){
-    //verlet collisions: offset player if not colliding with ground
-    _player->setMtv(_manager->collideTerrain(_player));
-    _player->move(_player->getMove());
-
-    //raytrace to find hovered point
-    if(mouseMove){
-        _ray->update(_camera->modelview, mouseX, mouseY);
-    }
-    else{
-        _ray->source = _camera->getPos();
-        _ray->direction = _camera->getLook();
-    }
-
-    HitTest trace;
-    _cManager->rayTrace(_ray,trace);
-    hit = trace;
-
     //dragging
     if(dragMode&&_manager->solve){
         draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),-1*_camera->getLook());
         interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(_mouseSpeed, seconds));
         draggedVerlet->setPos(draggedPoint,interpolate);
     }
-
-    World::onTick(seconds);
+    VerletLevel::onTick(seconds);
 }
 
 void VerletTest1::onDraw(Graphic *g){
@@ -132,12 +78,13 @@ void VerletTest1::onDraw(Graphic *g){
         g->transform(&Graphic::drawUnitSphere,interpolate,0,
                      Vector3(.1,.1,.1));
     }
-    World::onDraw(g);
+    VerletLevel::onDraw(g);
 }
 
 //Set if constraint is manipulated
 void VerletTest1::mousePressEvent(QMouseEvent *event){
-    World::mousePressEvent(event);
+    VerletLevel::mousePressEvent(event);
+
     if(event->button() == Qt::LeftButton&& hit.hit){
         _cManager->setSelection(hit.c);
         dragMode = true;
@@ -145,45 +92,17 @@ void VerletTest1::mousePressEvent(QMouseEvent *event){
         draggedVerlet = hit.v;
         interpolate = hit.v->getPoint(hit.id);
     }
-    if(event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton)
-        _manager->enableSolve();
 }
 
-//Set if constraint is hovered
 void VerletTest1::mouseMoveEvent(QMouseEvent *event){
-    World::mouseMoveEvent(event);
-    if(hit.hit)
-        _cManager->setHover(hit.c);
-    else
-        _cManager->resetHover();
+    VerletLevel::mouseMoveEvent(event);
 }
 
 //Set if constraint is deselected
 void VerletTest1::mouseReleaseEvent(QMouseEvent *event){
-    World::mouseReleaseEvent(event);
+    VerletLevel::mouseReleaseEvent(event);
     if(event->button() == Qt::LeftButton){
         dragMode = false;
         _cManager->resetSelection();
     }
 }
-
-//Camera zoom
-void VerletTest1::wheelEvent(QWheelEvent *event){
-    _camera->zoom(event->delta());
-}
-
-//F:freeze
-//U:reset player position
-void VerletTest1::keyPressEvent(QKeyEvent *event){
-    World::keyPressEvent(event);
-    if(event->key() == Qt::Key_F)
-        _manager->enableSolve();
-    if(event->key() == Qt::Key_U)
-        _player->resetPos(_startPos);
-    _player->keyPressEvent(event);
-}
-
-void VerletTest1::keyReleaseEvent(QKeyEvent *event){
-     _player->keyReleaseEvent(event);
-}
-

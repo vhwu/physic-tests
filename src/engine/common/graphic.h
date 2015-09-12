@@ -17,7 +17,6 @@ public:
     Graphic(View* v);
     virtual ~Graphic();
 
-    //********************
     Vector3 unproject(float winX, float winY);
     //UI
     void storeMatrix(); //to update matrices - call by corresponding method in app
