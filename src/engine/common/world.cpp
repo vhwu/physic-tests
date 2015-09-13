@@ -7,7 +7,8 @@
 #include "engine/common/screen.h"
 #include <iostream>
 
-World::World(Screen* s)
+World::World(Screen* s):
+    _gravity(Vector3(0,-6,0))
 {
     _screen = s;
     endGame = false;

@@ -47,6 +47,7 @@ public:
     //CONSTRAINTS
     //Creation
     void createPin(int index); //Fix point at specified index to its _pos
+    virtual Link* createLink(int a, int b); //Specify indices of two pre-existing points
     //Solving
     void linkConstraint();
     void pinConstraint();
@@ -66,8 +67,6 @@ protected:
 
     //Creates new point (at index numPoints) w/ given position
     int createPoint(const Vector3& pos);
-    //Specify indices of two pre-existing points
-    virtual Link* createLink(int a, int b);
 
     //Actual number of points
     int numPoints = 0;

@@ -28,7 +28,7 @@ public:
     //Settings
     //Vector3 gravity = Vector3(0,-1.5,0);
     Vector3 gravity = Vector3(0,0,0);
-    int _numSolves =2;
+    int _numSolves =3;
     bool solve = false;
     void enableSolve(){solve = !solve;}
 private:

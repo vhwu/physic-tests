@@ -66,10 +66,9 @@ void Verlet::onTick(float ){}
 
 void Verlet::onDraw(Graphic *g){
     g->setLineWidth(1);
+    g->setColor(Vector3(1,1,1));
     foreach(Link* l, links)
         drawLink(l,g);
-//    foreach(TranslationConstraint t, constraints)
-//        t.onDraw(g);
 }
 
 void Verlet::drawLink(Link *l, Graphic *g){

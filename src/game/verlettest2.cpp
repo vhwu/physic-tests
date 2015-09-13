@@ -5,6 +5,7 @@
 VerletTest2::VerletTest2(Screen* s): VerletLevel(s){
     //GRAVITY
     _manager->gravity = Vector3(0,-2,0);
+    this->_gravity = Vector3(0,0,0);
 
     //VERLETS+CONSTRAINTS
     float yOffset = -3;
@@ -13,35 +14,66 @@ VerletTest2::VerletTest2(Screen* s): VerletLevel(s){
     float clothWidth = 9;
     float clothLength = 20;
     float radius = 2;
-    float r2 = 2; //2.3 for constraints- have them at corners, not center of cloth
+    float r2 = 2.3; //2.3 for constraints- have them at corners, not center of cloth
 
-    Cloth* start = new Cloth(Vector2(12,12), .3, Vector3(0,0,0), Y, _manager);
-    start->pinCorners();
-    _manager->addVerlet(start);
+    int i2 = 82;
+
+//    Cloth* start = new Cloth(Vector2(10,10), .3, Vector3(0,0,0), Y, _manager);
+//    start->pinCorners();
+//    _manager->addVerlet(start);
 
     Cloth* c1 = new Cloth(Vector2(clothWidth,clothLength), triSize, Vector3(-radius,yOffset,centerOffset), Y, _manager);
     _manager->addVerlet(c1);
-    _cManager->addConstraint(new RotationConstraint(4, Y, c1->getPoint(4)+Vector3(radius,0,0),r2,c1,true));
+    _cManager->addConstraint(new RotationConstraint(0, Y, c1->getPoint(4)+Vector3(radius,0,0),r2,c1,true));
+    _cManager->addConstraint(new RotationConstraint(8, Y, c1->getPoint(4)+Vector3(radius,0,0),r2,c1,true));
+    c1->createLink(0,8);
 
     Cloth* c2 = new Cloth(Vector2(clothWidth,clothLength), -triSize, Vector3(radius,yOffset,-centerOffset), Y, _manager);
     _manager->addVerlet(c2);
-    //Note: index 80 by averaging corner 0 (80) and 2 (160)
-    _cManager->addConstraint(new RotationConstraint(4, Y, c2->getPoint(4)+Vector3(-radius,0,0),r2,c2,true));
+    _cManager->addConstraint(new RotationConstraint(0, Y, c2->getPoint(4)+Vector3(-radius,0,0),r2,c2,true));
+    _cManager->addConstraint(new RotationConstraint(8, Y, c2->getPoint(4)+Vector3(-radius,0,0),r2,c2,true));
+    c2->createLink(0,8);
+
+    _cManager->addConstraint(new VerletConstraint(0,c1,0,c2));
+    _cManager->addConstraint(new VerletConstraint(0,c1,8,c2));
+    _cManager->addConstraint(new VerletConstraint(8,c1,0,c2));
+    _cManager->addConstraint(new VerletConstraint(8,c1,8,c2));
+
     Cloth* c3 = new Cloth(Vector2(clothLength,clothWidth), triSize, Vector3(centerOffset-triSize/2.0,yOffset,-radius), Y, _manager);
     _manager->addVerlet(c3);
-    _cManager->addConstraint(new RotationConstraint(80, Y, c3->getPoint(80)+Vector3(0,0,radius),r2,c3,true));
+    _cManager->addConstraint(new RotationConstraint(0, Y, c3->getPoint(i2)+Vector3(0,0,radius),r2,c3,true));
+    _cManager->addConstraint(new RotationConstraint(164, Y, c3->getPoint(i2)+Vector3(0,0,radius),r2,c3,true));
+    c3->createLink(0,164);
+
     Cloth* c4 = new Cloth(Vector2(clothLength,clothWidth), -triSize, Vector3(-centerOffset+triSize/2.0,yOffset,radius), Y, _manager);
     _manager->addVerlet(c4);
-    _cManager->addConstraint(new RotationConstraint(80, Y, c4->getPoint(80)+Vector3(0,0,-radius),r2,c4,true));
+    _cManager->addConstraint(new RotationConstraint(0, Y, c4->getPoint(i2)+Vector3(0,0,-radius),r2,c4,true));
+    _cManager->addConstraint(new RotationConstraint(164, Y, c4->getPoint(i2)+Vector3(0,0,-radius),r2,c4,true));
+    c4->createLink(0,164);
 
-    //Constraints for connecting cloth, so they remain spaced evenly as they rotate
-    _cManager->addConstraint(new VerletConstraint(4,c1,80,c3));
-    _cManager->addConstraint(new VerletConstraint(4,c1,80,c4));
-    _cManager->addConstraint(new VerletConstraint(4,c2,80,c3));
-    _cManager->addConstraint(new VerletConstraint(4,c2,80,c4));
-    //Shear
-    _cManager->addConstraint(new VerletConstraint(4,c1,4,c2));
-    _cManager->addConstraint(new VerletConstraint(80,c4,80,c3));
+    _cManager->addConstraint(new VerletConstraint(0,c3,0,c2));
+    _cManager->addConstraint(new VerletConstraint(164,c3,8,c1));
+    _cManager->addConstraint(new VerletConstraint(0,c4,0,c1));
+    _cManager->addConstraint(new VerletConstraint(164,c4,8,c2));
+
+    _cManager->addConstraint(new VerletConstraint(0,c3,0,c4));
+    _cManager->addConstraint(new VerletConstraint(0,c3,164,c4));
+    _cManager->addConstraint(new VerletConstraint(164,c3,0,c4));
+    _cManager->addConstraint(new VerletConstraint(164,c3,164,c4));
+
+//    Constraints, using 1 middle point per cloth
+//            _cManager->addConstraint(new RotationConstraint(4, Y, c1->getPoint(4)+Vector3(radius,0,0),r2,c1,true));
+//    _cManager->addConstraint(new RotationConstraint(4, Y, c2->getPoint(4)+Vector3(-radius,0,0),r2,c2,true));
+//    _cManager->addConstraint(new RotationConstraint(i2, Y, c3->getPoint(i2)+Vector3(0,0,radius),r2,c3,true));
+//    _cManager->addConstraint(new RotationConstraint(i2, Y, c4->getPoint(i2)+Vector3(0,0,-radius),r2,c4,true));
+//    Constraints for connecting cloth, so they remain spaced evenly as they rotate
+//            _cManager->addConstraint(new VerletConstraint(4,c1,i2,c3));
+//    _cManager->addConstraint(new VerletConstraint(4,c1,i2,c4));
+//    _cManager->addConstraint(new VerletConstraint(4,c2,i2,c3));
+//    _cManager->addConstraint(new VerletConstraint(4,c2,i2,c4));
+//    //Shear
+//    _cManager->addConstraint(new VerletConstraint(4,c1,4,c2));
+//    _cManager->addConstraint(new VerletConstraint(i2,c4,i2,c3));
 }
 
 VerletTest2::~VerletTest2(){}
@@ -49,6 +81,7 @@ VerletTest2::~VerletTest2(){}
 void VerletTest2::onTick(float seconds){
     //dragging
     if(dragMode&&_manager->solve){
+        //What if, instead of using the camera's look at the normal for the plane, you use the axis of the constraint?
         draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),-1*_camera->getLook());
         interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(_mouseSpeed, seconds));
         draggedVerlet->setPos(draggedPoint,interpolate);
