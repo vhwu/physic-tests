@@ -3,7 +3,7 @@
 
 #include "constraint.h"
 
-//Constraint which limits point's movement to a circle of radius r on Axis a around center c
+//Constraint which limits point's movement to circle of radius r, normal of Axis a, around center c
 class RotationConstraint: public Constraint
 {
 public:
@@ -16,7 +16,6 @@ public:
 private:
     Vector3 center;
     float radius;
-    float stationary; //Value of unchanging axis
 };
 
 #endif // ROTATIONCONSTRAINT_H

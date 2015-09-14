@@ -6,14 +6,11 @@ RotationConstraint::RotationConstraint(int i, Axis a, const Vector3& c, float r,
     Constraint(i,a,verlet,s)
 {
     center = c;
-    radius = r;
-    Vector3 point = v->getPoint(index);
-    if(axis==X)
-        stationary = point.x;
-    else if(axis==Y)
-        stationary = point.y;
-    else
-        stationary = point.z;
+    radius = r;  
+    currentPos = v->getPoint(i);
+
+    //By default, point the axis the player doesn't control to center
+    control[a]=&center.xyz[a];
 }
 
 RotationConstraint::~RotationConstraint()
@@ -21,41 +18,34 @@ RotationConstraint::~RotationConstraint()
 
 void RotationConstraint::constrain(){
     Vector3 p = v->getPoint(index);
-    float x = p.x;
-    float y = p.y;
-    float z = p.z;
 
-    if(axis==X){
-        x = stationary;
-        float v1 = y - center.y;
-        float v2 = z - center.z;
-        float magV = sqrt(v1*v1 + v2*v2);
-        float a1 = center.y + v1 / magV * radius;
-        float a2 = center.z + v2 / magV * radius;
-        y = a1;
-        z = a2;
-    }
-    else if(axis==Y){
-        y = stationary;
-        float v1 = x - center.x;
-        float v2 = z - center.z;
-        float magV = sqrt(v1*v1 + v2*v2);
-        float a1 = center.x + v1 / magV * radius;
-        float a2 = center.z + v2 / magV * radius;
-        x = a1;
-        z = a2;
-    }
-    else{
-        z = stationary;
-        float v1 = x - center.x;
-        float v2 = y - center.y;
-        float magV = sqrt(v1*v1 + v2*v2);
-        float a1 = center.x + v1 / magV * radius;
-        float a2 = center.y + v2 / magV * radius;
-        x = a1;
-        y = a2;
-    }
-    v->setPos(index,Vector3(x,y,z));
+    //For non-specified axis: solve it, or defer solving to another constraint
+    p.xyz[axis] = solveAxis(axis,p.xyz[axis]);
+    //    if(selected)
+//        p.xyz[axis]=currentPos.xyz[axis];
+//    else if(!cede[axis])
+//        p.xyz[axis]=*control[axis];
+
+    //For two axes: ensure they're on the circumference of the rotation's circle
+    float v1 = p.xyz[nextA] - center.xyz[nextA];
+    float v2 = p.xyz[prevA] - center.xyz[prevA];
+    float magV = sqrt(v1*v1 + v2*v2);
+    float a1 = center.xyz[nextA] + v1 / magV * radius;
+    float a2 = center.xyz[prevA] + v2 / magV * radius;
+
+    //Commented out: selectable constraint will only move if it's selected
+//    if(selectable&&!selected){
+//        p.xyz[nextA]=currentPos.xyz[nextA];
+//        p.xyz[prevA]=currentPos.xyz[prevA];
+//    }
+//    else{
+        p.xyz[nextA] = a1;
+        p.xyz[prevA] = a2;
+//    }
+
+    v->setPos(index,p);
+    currentPos = p;
+    center.xyz[axis]=currentPos.xyz[axis]; //update center, for visualization
 }
 
 void RotationConstraint::onDraw(Graphic* g){

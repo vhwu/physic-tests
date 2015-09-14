@@ -89,13 +89,13 @@ public:
 class Vector3
 {
 public:
-    // This union provides both individual members "x", "y", and "z" an array "xyz"
-    // that are automatically in sync (since they actually refer to the same data).
-    // This is useful for OpenGL to pass vectors to the gl*3fv() functions:
-    //
-    //     Vector3 vec(1, 2, 3);
-    //     glVertex3fv(vec.xyz);
-    //
+//     This union provides both individual members "x", "y", and "z" an array "xyz"
+//     that are automatically in sync (since they actually refer to the same data).
+//     This is useful for OpenGL to pass vectors to the gl*3fv() functions:
+
+//         Vector3 vec(1, 2, 3);
+//         glVertex3fv(vec.xyz);
+
     union
     {
         struct { float x, y, z; };
