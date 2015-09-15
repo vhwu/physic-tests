@@ -21,10 +21,6 @@ void RotationConstraint::constrain(){
 
     //For non-specified axis: solve it, or defer solving to another constraint
     p.xyz[axis] = solveAxis(axis,p.xyz[axis]);
-    //    if(selected)
-//        p.xyz[axis]=currentPos.xyz[axis];
-//    else if(!cede[axis])
-//        p.xyz[axis]=*control[axis];
 
     //For two axes: ensure they're on the circumference of the rotation's circle
     float v1 = p.xyz[nextA] - center.xyz[nextA];

@@ -7,7 +7,10 @@ VerletConstraint::VerletConstraint(int i1, Verlet* verlet1, int i2, Verlet* verl
     index2 = i2;
 
     restLength = (v2->getPoint(index2)-v->getPoint(index)).length();
-    restLengthSq = restLength*restLength;}
+    restLengthSq = restLength*restLength;
+
+    currentPos = v->getPoint(index);
+}
 
 VerletConstraint::~VerletConstraint()
 {
@@ -26,6 +29,8 @@ void VerletConstraint::constrain(){
 
     v->setPos(index,posA);
     v2->setPos(index2,posB);
+
+    currentPos = posA;
 }
 
 void VerletConstraint::onDraw(Graphic* g){

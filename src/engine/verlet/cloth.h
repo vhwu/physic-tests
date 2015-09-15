@@ -16,6 +16,11 @@ public:
     void onTick(float seconds);
     void onDraw(Graphic *g);
 
+    //For setting up
+    void drawCorners(Graphic* g); //Color-codes corner order: RGB White
+    void printCorners(); //Prints index + location of each corner
+    bool visualize = false;
+
     //Returns index of corners (0-3)
     int getCorner(int c);
     //Pins all corners

@@ -26,6 +26,7 @@ public:
     bool getSelect(){return selectable;}
     void setHover(bool h){hovered=h;}
     void setSelect(bool s){selected=s;}
+    Vector3 getPos(){return currentPos;}
 
     //void onHover(); //add sound effects/ other activation effects later
     //void onSelect();

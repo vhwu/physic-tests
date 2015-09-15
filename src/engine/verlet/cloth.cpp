@@ -109,6 +109,14 @@ Cloth::Cloth(const Vector2 &dimension, float w,
     }
 }
 
+Cloth::~Cloth()
+{
+    for (std::vector<Tri*>::iterator it = _triangles.begin() ; it != _triangles.end(); ++it)
+        delete (*it);
+    _triangles.clear();
+}
+
+//***************************for update*****************************//
 void Cloth::onTick(float ){
     for(unsigned int i = 0; i<_triangles.size(); i++)
         calculate(_triangles.at(i));
@@ -123,6 +131,9 @@ void Cloth::onDraw(Graphic* g){
         g->drawTriangle(t->vertices,t->normal);
     }
     g->cull(true);
+
+    if(visualize)
+        drawCorners(g);
 }
 
 void Cloth::triangulate(int a, int b, int c){
@@ -131,6 +142,36 @@ void Cloth::triangulate(int a, int b, int c){
     _triangles.push_back(t);
 }
 
+//***************************for visualization*****************************//
+void Cloth::drawCorners(Graphic *g){
+    //RBGW
+    g->setColor(Vector3(1,0,0));
+    g->transform(&Graphic::drawUnitSphere,getPoint(getCorner(0)),0,
+                 Vector3(.1,.1,.1));
+    g->setColor(Vector3(0,1,0));
+    g->transform(&Graphic::drawUnitSphere,getPoint(getCorner(1)),0,
+                 Vector3(.1,.1,.1));
+    g->setColor(Vector3(0,0,1));
+    g->transform(&Graphic::drawUnitSphere,getPoint(getCorner(2)),0,
+                 Vector3(.1,.1,.1));
+    g->setColor(Vector3(1,1,1));
+    g->transform(&Graphic::drawUnitSphere,getPoint(getCorner(3)),0,
+                 Vector3(.1,.1,.1));
+}
+
+void Cloth::printCorners(){
+    int p0 = getCorner(0);
+    int p1 = getCorner(1);
+    int p2 = getCorner(2);
+    int p3 = getCorner(3);
+
+    std::cout<<"Corner 0 (R):"<<p0<<",at:"<<getPoint(p0)<<std::endl;
+    std::cout<<"Corner 1 (G):"<<p1<<",at:"<<getPoint(p1)<<std::endl;
+    std::cout<<"Corner 2 (B):"<<p2<<",at:"<<getPoint(p2)<<std::endl;
+    std::cout<<"Corner 3 (W):"<<p3<<",at:"<<getPoint(p3)<<std::endl;
+}
+
+//***************************for access/ control*****************************//
 int Cloth::getCorner(int c){
     if(c==0)
         return 0;
@@ -153,10 +194,4 @@ void Cloth::pinCorners(){
     this->createPin(getCorner(3));
 }
 
-Cloth::~Cloth()
-{
-    for (std::vector<Tri*>::iterator it = _triangles.begin() ; it != _triangles.end(); ++it)
-        delete (*it);
-    _triangles.clear();
-}
 

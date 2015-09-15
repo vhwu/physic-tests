@@ -7,7 +7,7 @@
 class RotationConstraint: public Constraint
 {
 public:
-    RotationConstraint(int i, Axis a, const Vector3& c, float r,
+    RotationConstraint(int i, Axis a, const Vector3& center, float radius,
                        Verlet* verlet,  bool s=false);
     virtual ~RotationConstraint();
 

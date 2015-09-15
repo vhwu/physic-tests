@@ -1,14 +1,14 @@
-#ifndef VERLETTEST2_H
-#define VERLETTEST2_H
+#ifndef VERLETTEST3_H
+#define VERLETTEST3_H
 
 #include "verletlevel.h"
 
-//For testing rotation constraints + verlet-verlet constraints for centrifugal/ centripetal force
-class VerletTest2:  public VerletLevel
+//For testing angle constraints, and constraints assigning control of certain axis to other constraints
+class VerletTest3: public VerletLevel
 {
 public:
-    VerletTest2(Screen* s);
-    virtual ~VerletTest2();
+    VerletTest3(Screen* s);
+    ~VerletTest3();
 
     void onTick(float seconds);
     void onDraw(Graphic *g);
@@ -30,4 +30,4 @@ public:
     Vector3 interpolate;
 };
 
-#endif // VERLETTEST2_H
+#endif // VERLETTEST3_H
