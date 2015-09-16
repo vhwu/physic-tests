@@ -4,6 +4,7 @@
 #include "verletlevel.h"
 
 //For testing set-up utility. Change variables to see effects
+//For testing angle constraints.
 class SetupCircle;
 class VerletTest4: public VerletLevel
 {

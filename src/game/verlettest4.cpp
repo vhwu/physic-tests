@@ -1,5 +1,6 @@
 #include "verlettest4.h"
 #include "engine/verlet/rotationconstraint.h"
+#include "engine/verlet/angleconstraint.h"
 #include "engine/verlet/setupcircle.h"
 
 VerletTest4::VerletTest4(Screen *s): VerletLevel(s){
@@ -8,10 +9,10 @@ VerletTest4::VerletTest4(Screen *s): VerletLevel(s){
     this->_gravity = Vector3(0,0,0);
 
     //Verlet variables
-    int numVerlets = 11;
-    int numTriangles = 1; //on edge of verlet along circle
+    int numVerlets = 6;
+    int numTriangles = 6; //on edge of verlet along circle
     Vector2 dim = Vector2(numTriangles+1,20);
-    float percentVerlet = .3; //ratio between verlet:space on circle
+    float percentVerlet = .5; //ratio between verlet:space on circle
 
     //Circle variables
     Axis a = Y;
@@ -24,11 +25,21 @@ VerletTest4::VerletTest4(Screen *s): VerletLevel(s){
 
     //Verlets
     SetupInfo test = circle->positionVerlets(numVerlets,percentVerlet,numTriangles);
-    for(int i = 0; i<numVerlets; i++){
+
+    //Base constraint: control point for player, and referenced by all others for its angle
+    Cloth* c = new Cloth(dim, test.triSize, test.startPos[0], a, _manager, test.angles[0]);
+    _manager->addVerlet(c);
+    RotationConstraint* rc = new RotationConstraint(c->getCorner(0),a,center,radius,c,true);
+    _cManager->addConstraint(rc);
+    _cManager->addConstraint(new RotationConstraint(c->getCorner(1),a,center,radius,c));
+    c->createLink(c->getCorner(0),c->getCorner(1));   //to provide offset within the same verlet
+
+    for(int i = 1; i<numVerlets; i++){
         Cloth* v = new Cloth(dim, test.triSize, test.startPos[i], a, _manager, test.angles[i]);
         _manager->addVerlet(v);
-        _cManager->addConstraint(new RotationConstraint(v->getCorner(0),a,center,radius,v));
+        _cManager->addConstraint(new AngleConstraint(v->getCorner(0),v,rc));
         _cManager->addConstraint(new RotationConstraint(v->getCorner(1),a,center,radius,v));
+        v->createLink(v->getCorner(0),v->getCorner(1));
     }
 }
 
@@ -38,7 +49,10 @@ VerletTest4::~VerletTest4()
 void VerletTest4::onTick(float seconds){
     //dragging
     if(dragMode&&_manager->solve){
-        draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),-1*_camera->getLook());
+        Vector3 normal = axis_coor[draggedConstraint->getAxis()];
+        draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),normal);
+
+//        draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),-1*_camera->getLook());
         interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(_mouseSpeed, seconds));
         draggedVerlet->setPos(draggedPoint,interpolate);
     }
@@ -63,7 +77,7 @@ void VerletTest4::onDraw(Graphic *g){
     Vector3 center = Vector3(0,0,0);
     float radius = 3;
     for(int i = 0; i<3; i++){
-        g->setColor(axis_color[i]);
+        g->setColor(axis_coor[i]);
         g->drawCircle((Axis)i,radius,center);
         Vector3 point = Vector3(0,0,0);
         point.xyz[i]=radius;
@@ -85,6 +99,7 @@ void VerletTest4::mousePressEvent(QMouseEvent *event){
         dragMode = true;
         draggedPoint = hit.id;
         draggedVerlet = hit.v;
+        draggedConstraint = hit.c;
         interpolate = hit.v->getPoint(hit.id);
     }
 }

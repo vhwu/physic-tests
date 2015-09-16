@@ -5,11 +5,10 @@
 #include "engine/common/axis.h"
 #include <vector>
 
-//Circle for setting up verlet in levels
-//Add to onDraw to visualize
 class Graphic;
 
 //Use for arranging verlets in a radial configuration
+    //Add to onDraw to visualize
 struct SetupInfo
 {
     std::vector<Vector3> startPos;
@@ -37,7 +36,11 @@ public:
     void onDraw(Graphic* g); //0 degrees in gray, 'angle' in red    
     void setAngle(int a){angle=a;}
 
-    Vector3 getPoint(float angle);
+    //Setup utility
+    Vector3 getPoint(float angle);  //Use to find point along circumference
+    //Use for information to arrange verlets in radial configuration
+        //percentileVerlets: ratio of verlet:space along circumference
+        //numTri: number of triangles on edge of verlet along circle
     SetupInfo positionVerlets(int numVerlets, float percentileVerlets, int numTri);
 private:
     //Stored for convenience- the two axes used for calculations

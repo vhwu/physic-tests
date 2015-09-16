@@ -60,13 +60,7 @@ void VerletTest2::onTick(float seconds){
     //dragging
     if(dragMode&&_manager->solve){
         //Test: use axis of constraint to determine normal for plane that ray is intersected w/, for mouse pos
-        Vector3 normal;
-        if(draggedConstraint->getAxis()==X)
-            normal = Vector3(1,0,0);
-        else if(draggedConstraint->getAxis()==Y)
-            normal = Vector3(0,1,0);
-        else
-            normal = Vector3(0,0,1);
+        Vector3 normal = axis_coor[draggedConstraint->getAxis()];
         draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),normal);
 
         //draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),-1*_camera->getLook());

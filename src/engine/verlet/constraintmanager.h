@@ -20,6 +20,7 @@ public:
     void solveConstraints();
 
     void addConstraint(Constraint *c);
+    Constraint* getConstraint(int c){return constraints[c];}
     //Raytraces points for all constraints, and returns whether there was a hit
     bool rayTrace(RayTracer* ray, HitTest &result);
 

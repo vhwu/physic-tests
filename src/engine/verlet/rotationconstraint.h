@@ -13,6 +13,8 @@ public:
 
     void constrain();
     void onDraw(Graphic* g);  //Visualizes arc of constraint
+    Vector3 getCenter(){return center;}
+    float getRadius(){return radius;}
 private:
     Vector3 center;
     float radius;

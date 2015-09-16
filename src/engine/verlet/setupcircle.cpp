@@ -28,7 +28,7 @@ Vector3 SetupCircle::getPoint(float angle){
 SetupInfo SetupCircle::positionVerlets(int numVerlets, float percentileVerlets, int numTri){
     float interval = 360.0/(float)numVerlets; //degrees from start of one verlet to next
     float percent = interval*percentileVerlets; //degrees one verlet occupies along circle
-    float distance = (getPoint(0)-getPoint(percent)).length(); //distance btwn the 2 points on the circle
+    float distance = (getPoint(0)-getPoint(percent)).length(); //distance btwn verlet's 2 points on the circle
     float triSize = distance/(float)numTri;
 
     std::vector<Vector3> startPos(numVerlets);
