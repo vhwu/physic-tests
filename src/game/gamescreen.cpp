@@ -4,6 +4,7 @@
 #include "verlettest1.h"
 #include "verlettest2.h"
 #include "verlettest3.h"
+#include "verlettest4.h"
 #include "engine/common/application.h"
 
 #include <iostream>
@@ -17,11 +18,13 @@ GameScreen::GameScreen(View* v, Application* a): Screen(v, a)
 void GameScreen::create(int m){
     mode = m;
     if(mode==1)
-        _world = new VerletTest3(this);
+        _world = new VerletTest1(this);
     else if(mode==2)
         _world = new VerletTest2(this);
-    else
-        _world = new VerletTest1(this);
+    else if(mode==3)
+        _world = new VerletTest3(this);
+    else if(mode==4)
+        _world = new VerletTest4(this);
 }
 
 GameScreen::~GameScreen()
@@ -38,6 +41,15 @@ void GameScreen::tick(float seconds)
 
 void GameScreen::onDraw(Graphic *g)
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glColor3f(1,1,1);
+    _view->renderText(0,10,
+                       "Camera: move (MMB drag) and zoom (MMB scroll)", _view->font());
+    _view->renderText(0,25,
+                       "Avatar controls: WASD, space, R=up, F=down, U=reset position", _view->font());
+    _view->renderText(0,40,
+                       "Environment interaction: LMB = selectable points in teal, RMB = freeze/unfreeze", _view->font());
     _world->onDraw(g);
 }
 

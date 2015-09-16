@@ -17,8 +17,10 @@ VerletTest3::VerletTest3(Screen *s): VerletLevel(s){
     float clothLength = 20;
     float radius = 2;
     float r2 = 2.3; //2.3 for constraints- have them at corners, not center of cloth
+    int angle = 90;
 
-    Cloth* c1 = new Cloth(Vector2(clothWidth,clothLength), triSize, Vector3(-radius,yOffset,centerOffset), Y, _manager);
+    Cloth* c1 = new Cloth(Vector2(clothWidth,clothLength), triSize,
+                          Vector3(-radius,yOffset,centerOffset), Y, _manager, angle);
     _manager->addVerlet(c1);
     RotationConstraint* rControl = new RotationConstraint(0, Y, c1->getPoint(4)+Vector3(radius,0,0),r2,c1,true);
     RotationConstraint* rPassive = new RotationConstraint(8, Y, c1->getPoint(4)+Vector3(radius,0,0),r2,c1);
@@ -36,7 +38,8 @@ VerletTest3::VerletTest3(Screen *s): VerletLevel(s){
     rPassive->assign(Y,t);
     rControl->assign(Y,t);
 
-    Cloth* c2 = new Cloth(Vector2(clothWidth,clothLength), triSize, Vector3(2,2,2), Y, _manager);
+    //Visualization example
+    Cloth* c2 = new Cloth(Vector2(clothWidth,clothLength), triSize, Vector3(2,2,2), Y, _manager, angle);
     _manager->addVerlet(c2);
     c2->visualize = true;
 

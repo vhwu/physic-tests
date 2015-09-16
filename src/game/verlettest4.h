@@ -1,15 +1,15 @@
-#ifndef VERLETTEST2_H
-#define VERLETTEST2_H
+#ifndef VERLETTEST4_H
+#define VERLETTEST4_H
 
 #include "verletlevel.h"
 
-//For testing rotation constraints + verlet-verlet constraints for centrifugal/ centripetal force
+//For testing set-up utility. Change variables to see effects
 class SetupCircle;
-class VerletTest2:  public VerletLevel
+class VerletTest4: public VerletLevel
 {
 public:
-    VerletTest2(Screen* s);
-    virtual ~VerletTest2();
+    VerletTest4(Screen* s);
+    ~VerletTest4();
 
     void onTick(float seconds);
     void onDraw(Graphic *g);
@@ -33,4 +33,4 @@ private:
     SetupCircle* circle;
 };
 
-#endif // VERLETTEST2_H
+#endif // VERLETTEST4_H

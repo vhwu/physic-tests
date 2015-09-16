@@ -33,14 +33,14 @@ void TranslationConstraint::constrain(){
 }
 
 void TranslationConstraint::onDraw(Graphic* g){
-    //Range: gray if unselectable, green if selected, cyan if selectable
+    //Range: gray if unselectable, yellow if selected, cyan if selectable
     Vector3 minRange = currentPos;
     minRange.xyz[axis]=min;
     Vector3 maxRange = currentPos;
     maxRange.xyz[axis]=max;
 
     if(selected)
-        g->setColor(Vector3(0,1,0));
+        g->setColor(Vector3(1,1,0));
     else if(selectable)
         g->setColor(Vector3(0,1,1));
     else

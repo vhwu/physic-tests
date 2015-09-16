@@ -4,19 +4,23 @@
 #include "engine/common/collectiblemanager.h"
 
 VerletTest1::VerletTest1(Screen *s): VerletLevel(s){
+    _startPos = Vector3(-1,3,1.5);
+    _player->setPos(_startPos);
     //MANAGERSs
     CollectibleManager* cm = new CollectibleManager(_player);
     this->addManager(cm);
 
     //VERLETS
-    Cloth* start = new Cloth(Vector2(12,12), .3, Vector3(0,0,0), Y, _manager);
+    int angle = 270;
+    float size = .3;
+    Cloth* start = new Cloth(Vector2(12,12), size, Vector3(0,0,0), Y, _manager, angle);
     start->pinCorners();
-    Cloth* end = new Cloth(Vector2(12,12), .3, Vector3(-26,4,0), Y, _manager);
+    Cloth* end = new Cloth(Vector2(12,12), size, Vector3(-26,4,0), Y, _manager, angle);
     end->pinCorners();
     _manager->addVerlet(end);
     _manager->addVerlet(start);
 
-    Cloth* c1 = new Cloth(Vector2(12,90), .3, Vector3(-3.5,0,0), Y, _manager);
+    Cloth* c1 = new Cloth(Vector2(12,90), size, Vector3(-3.5,0,0), Y, _manager, angle);
     //Offset further two corners, to give cloth some slack
     Vector3 test1 = c1->getPoint(c1->getCorner(2));
     Vector3 test2 = c1->getPoint(c1->getCorner(3));
@@ -34,21 +38,22 @@ VerletTest1::VerletTest1(Screen *s): VerletLevel(s){
     _cManager->addConstraint(new TranslationConstraint(6, Y, 7, c1,true));
 
     //COLLECTIBLES
-    cm->addCollectible(new Token(Vector3(-4,-1,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-7,-2,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-10,-1,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-13,0,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-16,1,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-19,2,-1.5),_player));
-    cm->addCollectible(new Token(Vector3(-22,1,-1.5),_player));
+    float offsetZ = 1.5;
+    cm->addCollectible(new Token(Vector3(-4,-1,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-7,-2,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-10,-1,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-13,0,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-16,1,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-19,2,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-22,1,offsetZ),_player));
     //Randomly distributed
-    cm->addCollectible(new Token(Vector3(-2,-1.2,-1.3),_player));
-    cm->addCollectible(new Token(Vector3(-4,-0.3,-1.6),_player));
-    cm->addCollectible(new Token(Vector3(-11,.3,-1.4),_player));
-    cm->addCollectible(new Token(Vector3(-14,0.1,-1.8),_player));
-    cm->addCollectible(new Token(Vector3(-16,-.2,-1.2),_player));
-    cm->addCollectible(new Token(Vector3(-18,.14,-1.25),_player));
-    cm->addCollectible(new Token(Vector3(-21,1,-1.7),_player));
+    cm->addCollectible(new Token(Vector3(-2,-1.2,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-4,-0.3,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-11,.3,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-14,0.1,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-16,-.2,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-18,.14,offsetZ),_player));
+    cm->addCollectible(new Token(Vector3(-21,1,offsetZ),_player));
 }
 
 VerletTest1::~VerletTest1()

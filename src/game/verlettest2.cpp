@@ -1,8 +1,7 @@
 #include "verlettest2.h"
 #include "engine/verlet/rotationconstraint.h"
 #include "engine/verlet/verletconstraint.h"
-
-#include "engine/verlet/translationconstraint.h"
+#include "engine/verlet/setupcircle.h"
 
 VerletTest2::VerletTest2(Screen* s): VerletLevel(s){
     //GRAVITY
@@ -11,53 +10,48 @@ VerletTest2::VerletTest2(Screen* s): VerletLevel(s){
     _mouseSpeed = .4;
 
     //VERLETS+CONSTRAINTS
-    float yOffset = -3;
-    float centerOffset = 1.2;
-    float triSize = .3;
-    float clothWidth = 9;
-    float clothLength = 20;
-    float radius = 2;
-    float r2 = 2.3; //To have constraints at corners, not center of cloth
-    int i2 = 82;
+    //Verlet variables
+    int numVerlets = 4;
+    int numTriangles = 8; //on edge of verlet along circle
+    Vector2 dim = Vector2(numTriangles+1,20);
+    float percentVerlet = .5; //ratio between verlet:space on circle
+    //Circle variables
+    Axis a = Y;
+    float radius = 2.3;
+    Vector3 center = Vector3(0,-3,0);
 
-    Cloth* c1 = new Cloth(Vector2(clothWidth,clothLength), triSize, Vector3(-radius,yOffset,centerOffset), Y, _manager);
-    _manager->addVerlet(c1);
-    _cManager->addConstraint(new RotationConstraint(0, Y, c1->getPoint(4)+Vector3(radius,0,0),r2,c1,true));
-    _cManager->addConstraint(new RotationConstraint(8, Y, c1->getPoint(4)+Vector3(radius,0,0),r2,c1,true));
-    c1->createLink(0,8);
+    //Setup circle
+    circle = new SetupCircle(radius,center,a);
 
-    Cloth* c2 = new Cloth(Vector2(clothWidth,clothLength), -triSize, Vector3(radius,yOffset,-centerOffset), Y, _manager);
-    _manager->addVerlet(c2);
-    _cManager->addConstraint(new RotationConstraint(0, Y, c2->getPoint(4)+Vector3(-radius,0,0),r2,c2,true));
-    _cManager->addConstraint(new RotationConstraint(8, Y, c2->getPoint(4)+Vector3(-radius,0,0),r2,c2,true));
-    c2->createLink(0,8);
+    //Verlets
+    SetupInfo test = circle->positionVerlets(numVerlets,percentVerlet,numTriangles);
+    for(int i = 0; i<numVerlets; i++){
+        Cloth* v = new Cloth(dim, test.triSize, test.startPos[i], a, _manager, test.angles[i]);
+        _manager->addVerlet(v);
+        v->createLink(v->getCorner(0),v->getCorner(1));
+        _cManager->addConstraint(new RotationConstraint(v->getCorner(0),a,center,radius,v,true));
+        _cManager->addConstraint(new RotationConstraint(v->getCorner(1),a,center,radius,v,true));
+    }
 
-    Cloth* c3 = new Cloth(Vector2(clothLength,clothWidth), triSize, Vector3(centerOffset-triSize/2.0,yOffset,-radius), Y, _manager);
-    _manager->addVerlet(c3);
-    _cManager->addConstraint(new RotationConstraint(0, Y, c3->getPoint(i2)+Vector3(0,0,radius),r2,c3,true));
-    _cManager->addConstraint(new RotationConstraint(164, Y, c3->getPoint(i2)+Vector3(0,0,radius),r2,c3,true));
-    c3->createLink(0,164);
+    Verlet* c1 = _manager->getVerlet(0);
+    Verlet* c2 = _manager->getVerlet(1);
+    Verlet* c3 = _manager->getVerlet(2);
+    Verlet* c4 = _manager->getVerlet(3);
 
-    Cloth* c4 = new Cloth(Vector2(clothLength,clothWidth), -triSize, Vector3(-centerOffset+triSize/2.0,yOffset,radius), Y, _manager);
-    _manager->addVerlet(c4);
-    _cManager->addConstraint(new RotationConstraint(0, Y, c4->getPoint(i2)+Vector3(0,0,-radius),r2,c4,true));
-    _cManager->addConstraint(new RotationConstraint(164, Y, c4->getPoint(i2)+Vector3(0,0,-radius),r2,c4,true));
-    c4->createLink(0,164);
+    _cManager->addConstraint(new VerletConstraint(0,c1,0,c3));
+    _cManager->addConstraint(new VerletConstraint(0,c1,8,c3));
+    _cManager->addConstraint(new VerletConstraint(8,c1,0,c3));
+    _cManager->addConstraint(new VerletConstraint(8,c1,8,c3));
 
-    _cManager->addConstraint(new VerletConstraint(0,c1,0,c2));
-    _cManager->addConstraint(new VerletConstraint(0,c1,8,c2));
+    _cManager->addConstraint(new VerletConstraint(0,c2,0,c4));
+    _cManager->addConstraint(new VerletConstraint(0,c2,8,c4));
+    _cManager->addConstraint(new VerletConstraint(8,c2,0,c4));
+    _cManager->addConstraint(new VerletConstraint(8,c2,8,c4));
+
     _cManager->addConstraint(new VerletConstraint(8,c1,0,c2));
-    _cManager->addConstraint(new VerletConstraint(8,c1,8,c2));
-
-    _cManager->addConstraint(new VerletConstraint(0,c3,0,c2));
-    _cManager->addConstraint(new VerletConstraint(164,c3,8,c1));
-    _cManager->addConstraint(new VerletConstraint(0,c4,0,c1));
-    _cManager->addConstraint(new VerletConstraint(164,c4,8,c2));
-
-    _cManager->addConstraint(new VerletConstraint(0,c3,0,c4));
-    _cManager->addConstraint(new VerletConstraint(0,c3,164,c4));
-    _cManager->addConstraint(new VerletConstraint(164,c3,0,c4));
-    _cManager->addConstraint(new VerletConstraint(164,c3,164,c4));
+    _cManager->addConstraint(new VerletConstraint(8,c2,0,c3));
+    _cManager->addConstraint(new VerletConstraint(8,c3,0,c4));
+    _cManager->addConstraint(new VerletConstraint(8,c4,0,c1));
 }
 
 VerletTest2::~VerletTest2(){}

@@ -61,7 +61,9 @@ SOURCES += \
     src/engine/verlet/verletconstraint.cpp \
     src/game/verletlevel.cpp \
     src/engine/verlet/angleconstraint.cpp \
-    src/game/verlettest3.cpp
+    src/game/verlettest3.cpp \
+    src/game/verlettest4.cpp \
+    src/engine/verlet/setupcircle.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -105,7 +107,9 @@ HEADERS += \
     src/engine/verlet/verletconstraint.h \
     src/game/verletlevel.h \
     src/engine/verlet/angleconstraint.h \
-    src/game/verlettest3.h
+    src/game/verlettest3.h \
+    src/game/verlettest4.h \
+    src/engine/verlet/setupcircle.h
 
 
 FORMS += src/mainwindow.ui

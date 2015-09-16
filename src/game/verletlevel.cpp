@@ -57,7 +57,8 @@ void VerletLevel::onDraw(Graphic *g){
 //Double click for freezing/ unfreezing
 void VerletLevel::mousePressEvent(QMouseEvent *event){
     World::mousePressEvent(event);
-    if(event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton)
+    //if(event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton)
+    if(event->button()==Qt::RightButton)
         _manager->enableSolve();
 }
 
@@ -83,8 +84,6 @@ void VerletLevel::wheelEvent(QWheelEvent *event){
 //U:reset player position
 void VerletLevel::keyPressEvent(QKeyEvent *event){
     World::keyPressEvent(event);
-    if(event->key() == Qt::Key_F)
-        _manager->enableSolve();
     if(event->key() == Qt::Key_U)
         _player->resetPos(_startPos);
     _player->keyPressEvent(event);

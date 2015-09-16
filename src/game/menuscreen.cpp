@@ -24,7 +24,7 @@ void MenuScreen::onDraw(Graphic* )
 
     glColor3f(1,1,1);
     _view->renderText(_view->width()/2-120, _view->height()/2,
-                       "Press any key to start", _view->font());
+                       "1.Translation, 2.Rotation, 3.Constraints, 4.Angles", _view->font());
 }
 
 void MenuScreen::onUI(Graphic* ){}
@@ -55,8 +55,8 @@ void MenuScreen::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_3){
         _app->changeScreen(3);
     }
-    if (event->key() == Qt::Key_5){
-        _app->changeScreen(5);
+    if (event->key() == Qt::Key_4){
+        _app->changeScreen(4);
     }
 }
 

@@ -45,9 +45,11 @@ void RotationConstraint::constrain(){
 }
 
 void RotationConstraint::onDraw(Graphic* g){
-    //Arc: gray if unselectable, green if selectable
-    if(selectable)
-        g->setColor(Vector3(0,1,0));
+    //Arc: gray if unselectable, teal if selectable, yellow if selected
+    if(selected)
+        g->setColor(Vector3(1,1,0));
+    else if(selectable)
+        g->setColor(Vector3(0,1,1));
     else
         g->setColor(Vector3(.5,.5,.5));
     g->drawCircle(axis,radius,center);
