@@ -40,6 +40,7 @@ public:
     void setAcc(const Vector3& a){_acc = a;}
     void setMove(const Vector3& move){_toMove = move;}
     void setMtv(const Vector3& mtv){_mtv = mtv;}
+    void setVisible(bool v){visible = v;}
 
     //Additive
     void applyAcc(const Vector3& a);
@@ -55,6 +56,8 @@ protected:
     Vector3 _toMove;
     //Store mtv as 'callback'
     Vector3 _mtv;
+    //Whether it'll be drawn
+    bool visible = true;
 };
 
 #endif // ENTITY_H

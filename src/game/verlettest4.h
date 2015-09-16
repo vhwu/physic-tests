@@ -3,8 +3,8 @@
 
 #include "verletlevel.h"
 
-//For testing set-up utility. Change variables to see effects
-//For testing angle constraints.
+//For testing set-up utility and angle constraints. Change variables to see effects
+//Note: player is invisible + non-collidable in this level
 class SetupCircle;
 class VerletTest4: public VerletLevel
 {

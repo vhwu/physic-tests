@@ -158,7 +158,7 @@ void Cloth::onTick(float ){
 }
 
 void Cloth::onDraw(Graphic* g){
-    Verlet::onDraw(g);
+    //Verlet::onDraw(g);
 
     g->cull(false);
     for(Tri* t: _triangles){

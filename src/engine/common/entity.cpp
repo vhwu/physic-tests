@@ -29,7 +29,8 @@ void Entity::onTick(float seconds)
 void Entity::onUI(Graphic* ){}
 
 void Entity::onDraw(Graphic* g){
-    _shape->onDraw(g);
+    if(visible)
+        _shape->onDraw(g);
 }
 
 void Entity::applyAcc(const Vector3& a){

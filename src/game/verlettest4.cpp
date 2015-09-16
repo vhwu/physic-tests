@@ -4,15 +4,21 @@
 #include "engine/verlet/setupcircle.h"
 
 VerletTest4::VerletTest4(Screen *s): VerletLevel(s){
+    //Centered, invisible player
+    _startPos = Vector3(0,0,0);
+    _player->setPos(_startPos);
+    _player->setVisible(false);
+
     //GRAVITY
-    _manager->gravity = Vector3(0,-2,0);
+    _manager->gravity = Vector3(0,-1.9,0);
     this->_gravity = Vector3(0,0,0);
 
     //Verlet variables
+    //numVerlets:9 numTriangles:3 dim:50 percent:.5
     int numVerlets = 6;
     int numTriangles = 6; //on edge of verlet along circle
-    Vector2 dim = Vector2(numTriangles+1,20);
-    float percentVerlet = .5; //ratio between verlet:space on circle
+    Vector2 dim = Vector2(numTriangles+1,40);
+    float percentVerlet = .7; //ratio between verlet:space on circle
 
     //Circle variables
     Axis a = Y;
@@ -56,7 +62,21 @@ void VerletTest4::onTick(float seconds){
         interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(_mouseSpeed, seconds));
         draggedVerlet->setPos(draggedPoint,interpolate);
     }
-    VerletLevel::onTick(seconds);
+    //NO COLLISIONS
+    //raytrace to find hovered point
+    if(mouseMove){
+        _ray->update(_camera->modelview, mouseX, mouseY);
+    }
+    else{
+        _ray->source = _camera->getPos();
+        _ray->direction = _camera->getLook();
+    }
+
+    HitTest trace;
+    _cManager->rayTrace(_ray,trace);
+    hit = trace;
+
+    World::onTick(seconds);
 }
 
 void VerletTest4::onDraw(Graphic *g){
@@ -74,19 +94,17 @@ void VerletTest4::onDraw(Graphic *g){
     }
 
     //Visualize axes: XYZ = RGB, w/ sphere at 'positive' end
-    Vector3 center = Vector3(0,0,0);
-    float radius = 3;
-    for(int i = 0; i<3; i++){
-        g->setColor(axis_coor[i]);
-        g->drawCircle((Axis)i,radius,center);
-        Vector3 point = Vector3(0,0,0);
-        point.xyz[i]=radius;
-        g->transform(&Graphic::drawUnitSphere,point,0,
-                     Vector3(.1,.1,.1));
-    }
+//    Vector3 center = Vector3(0,0,0);
+//    float radius = 3;
+//    for(int i = 0; i<3; i++){
+//        g->setColor(axis_coor[i]);
+//        g->drawCircle((Axis)i,radius,center);
+//        Vector3 point = Vector3(0,0,0);
+//        point.xyz[i]=radius;
+//        g->transform(&Graphic::drawUnitSphere,point,0,
+//                     Vector3(.1,.1,.1));
+//    }
 
-    //Visualize setup
-    circle->onDraw(g);
     VerletLevel::onDraw(g);
 }
 
