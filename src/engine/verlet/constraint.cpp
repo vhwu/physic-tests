@@ -61,11 +61,11 @@ void Constraint::onDraw(Graphic* g){
         g->transform(&Graphic::drawUnitSphere,v->getPoint(index),0,
                      Vector3(.15,.15,.15));
     }
-    else{
-        g->setColor(Vector4(.5,.5,.5,.5));
-        g->transform(&Graphic::drawUnitSphere,v->getPoint(index),0,
-                     Vector3(.15,.15,.15));
-    }
+//    else{
+//        g->setColor(Vector4(.5,.5,.5,.5));
+//        g->transform(&Graphic::drawUnitSphere,v->getPoint(index),0,
+//                     Vector3(.15,.15,.15));
+//    }
 }
 
 void Constraint::onTick(float ){}

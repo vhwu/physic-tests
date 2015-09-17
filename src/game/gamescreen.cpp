@@ -5,6 +5,7 @@
 #include "verlettest2.h"
 #include "verlettest3.h"
 #include "verlettest4.h"
+#include "verlettest5.h"
 #include "engine/common/application.h"
 
 #include <iostream>
@@ -25,6 +26,8 @@ void GameScreen::create(int m){
         _world = new VerletTest3(this);
     else if(mode==4)
         _world = new VerletTest4(this);
+    else if(mode==5)
+        _world = new VerletTest5(this);
 }
 
 GameScreen::~GameScreen()
