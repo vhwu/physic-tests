@@ -2,7 +2,7 @@
 #include "entity.h"
 #include "collectible.h"
 
-CollectibleManager::CollectibleManager(Entity *e)
+CollectibleManager::CollectibleManager(World *w, Entity *e): Manager(w)
 {
     focal = e;
 }

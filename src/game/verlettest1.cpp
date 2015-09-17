@@ -4,29 +4,31 @@
 #include "engine/common/collectiblemanager.h"
 
 VerletTest1::VerletTest1(Screen *s): VerletLevel(s){
+    //Player starting position
     _startPos = Vector3(-1,3,1.5);
     _player->setPos(_startPos);
-    //MANAGERSs
-    CollectibleManager* cm = new CollectibleManager(_player);
+
+    //MANAGERS
+    CollectibleManager* cm = new CollectibleManager(this,_player);
     this->addManager(cm);
 
     //VERLETS
     int angle = 270;
     float size = .3;
-    Cloth* start = new Cloth(Vector2(12,12), size, Vector3(0,0,0), Y, _manager, angle);
+    Cloth* start = new Cloth(Vector2(12,12), size, Vector3(0,0,0), Y, _vManager, angle);
     start->pinCorners();
-    Cloth* end = new Cloth(Vector2(12,12), size, Vector3(-26,4,0), Y, _manager, angle);
+    Cloth* end = new Cloth(Vector2(12,12), size, Vector3(-26,4,0), Y, _vManager, angle);
     end->pinCorners();
-    _manager->addVerlet(end);
-    _manager->addVerlet(start);
+    _vManager->addVerlet(end);
+    _vManager->addVerlet(start);
 
-    Cloth* c1 = new Cloth(Vector2(12,90), size, Vector3(-3.5,0,0), Y, _manager, angle);
+    Cloth* c1 = new Cloth(Vector2(12,90), size, Vector3(-3.5,0,0), Y, _vManager, angle);
     //Offset further two corners, to give cloth some slack
     Vector3 test1 = c1->getPoint(c1->getCorner(2));
     Vector3 test2 = c1->getPoint(c1->getCorner(3));
     c1->setPos(c1->getCorner(2),Vector3(-25,test1.y,test1.z));
     c1->setPos(c1->getCorner(3),Vector3(-25,test2.y,test2.z));
-    _manager->addVerlet(c1);
+    _vManager->addVerlet(c1);
 
     //CONSTRAINTS
     //Constrain corners to translation on y-axis
@@ -58,56 +60,4 @@ VerletTest1::VerletTest1(Screen *s): VerletLevel(s){
 
 VerletTest1::~VerletTest1()
 {
-}
-
-void VerletTest1::onTick(float seconds){
-    //dragging
-    if(dragMode&&_manager->solve){
-        draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),-1*_camera->getLook());
-        interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(_mouseSpeed, seconds));
-        draggedVerlet->setPos(draggedPoint,interpolate);
-    }
-    VerletLevel::onTick(seconds);
-}
-
-void VerletTest1::onDraw(Graphic *g){
-    //VISUALIZATION
-    //Interpolation
-    if(dragMode){
-        //draw mouse pos in cyan
-        g->setColor(Vector3(0,1,1));
-        g->transform(&Graphic::drawUnitSphere,draggedMouse,0,
-                     Vector3(.1,.1,.1));
-        //draw interpolated position in green
-        g->setColor(Vector3(0,1,0));
-        g->transform(&Graphic::drawUnitSphere,interpolate,0,
-                     Vector3(.1,.1,.1));
-    }
-    VerletLevel::onDraw(g);
-}
-
-//Set if constraint is manipulated
-void VerletTest1::mousePressEvent(QMouseEvent *event){
-    VerletLevel::mousePressEvent(event);
-
-    if(event->button() == Qt::LeftButton&& hit.hit){
-        _cManager->setSelection(hit.c);
-        dragMode = true;
-        draggedPoint = hit.id;
-        draggedVerlet = hit.v;
-        interpolate = hit.v->getPoint(hit.id);
-    }
-}
-
-void VerletTest1::mouseMoveEvent(QMouseEvent *event){
-    VerletLevel::mouseMoveEvent(event);
-}
-
-//Set if constraint is deselected
-void VerletTest1::mouseReleaseEvent(QMouseEvent *event){
-    VerletLevel::mouseReleaseEvent(event);
-    if(event->button() == Qt::LeftButton){
-        dragMode = false;
-        _cManager->resetSelection();
-    }
 }

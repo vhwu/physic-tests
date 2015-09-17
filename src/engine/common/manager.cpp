@@ -1,17 +1,12 @@
 #include "manager.h"
+#include "world.h"
 
-Manager::Manager()
+Manager::Manager(World *w)
 {
-
+    world = w;
 }
 
 Manager::~Manager()
 {
 
-}
-
-void Manager::onUI(Graphic* ){}
-
-Vector3 Manager::collideTerrain(Entity* ){
-    return Vector3(0,0,0);
 }

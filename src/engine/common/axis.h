@@ -1,6 +1,8 @@
 #ifndef AXIS
 #define AXIS
 
+#include "vector.h"
+
 enum Axis
 {
     X, Y, Z, NO_AXIS

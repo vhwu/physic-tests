@@ -13,7 +13,7 @@ class Collectible;
 class CollectibleManager: public Manager
 {
 public:
-    CollectibleManager(Entity* e);
+    CollectibleManager(World* w, Entity* e);
     ~CollectibleManager();
 
     void onTick(float seconds);

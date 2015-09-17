@@ -12,6 +12,13 @@ World::World(Screen* s):
 {
     _screen = s;
     endGame = false;
+    _camera = new Camera(Vector2(800, 600), false);
+
+    //Raytracing while toggling between stationary + moveable mouse
+    if(mouseMove)
+        _ray = new RayTracer(_camera->modelview, mouseX, mouseY);
+    else
+        _ray = new RayTracer(_camera->getPos(), _camera->getLook());
 }
 
 World::~World()
@@ -21,6 +28,7 @@ World::~World()
     qDeleteAll(_entities);
     _entities.clear();
     delete _camera;
+    delete _ray;
 }
 
 void World::onTick(float seconds)
@@ -43,6 +51,14 @@ void World::onTick(float seconds)
     foreach (Manager* m, _managers)
         m->onTick(seconds);
 
+    //raytrace to find hovered point
+    if(mouseMove){
+        _ray->update(_camera->modelview, mouseX, mouseY);
+    }
+    else{
+        _ray->source = _camera->getPos();
+        _ray->direction = _camera->getLook();
+    }
 }
 
 void World::onDraw(Graphic *g)
@@ -90,6 +106,8 @@ void World::mousePressEvent(QMouseEvent *event){
     mouseY = event->y();
     if(event->button() == Qt::MidButton)  //enable
         draggingCamera=true;
+    foreach (Manager* m, _managers)
+        m->mousePressEvent(event);
 }
 
 void World::mouseMoveEvent(QMouseEvent *event){
@@ -106,14 +124,31 @@ void World::mouseMoveEvent(QMouseEvent *event){
     }
     mouseX = event->x();
     mouseY = event->y();
+
+    foreach (Manager* m, _managers)
+        m->mouseMoveEvent(event);
 }
+
 void World::mouseReleaseEvent(QMouseEvent *event){
     if(event->button() == Qt::MidButton)
         draggingCamera=false;
+    foreach (Manager* m, _managers)
+        m->mouseReleaseEvent(event);
 }
+
 void World::keyPressEvent(QKeyEvent *event){
     if(event->key() == Qt::Key_M)
         mouseMove=!mouseMove;
+    foreach (Manager* m, _managers)
+        m->keyPressEvent(event);
 }
 
+void World::keyReleaseEvent(QKeyEvent *event){
+    foreach (Manager* m, _managers)
+        m->keyReleaseEvent(event);
+}
 
+void World::wheelEvent(QWheelEvent *event){
+    foreach (Manager* m, _managers)
+        m->wheelEvent(event);
+}

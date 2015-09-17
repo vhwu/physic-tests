@@ -5,7 +5,7 @@
 
 VerletTest2::VerletTest2(Screen* s): VerletLevel(s){
     //GRAVITY
-    _manager->gravity = Vector3(0,-2,0);
+    _vManager->gravity = Vector3(0,-2,0);
     this->_gravity = Vector3(0,0,0);
     _mouseSpeed = .4;
 
@@ -26,17 +26,17 @@ VerletTest2::VerletTest2(Screen* s): VerletLevel(s){
     //Verlets
     SetupInfo test = circle->positionVerlets(numVerlets,percentVerlet,numTriangles);
     for(int i = 0; i<numVerlets; i++){
-        Cloth* v = new Cloth(dim, test.triSize, test.startPos[i], a, _manager, test.angles[i]);
-        _manager->addVerlet(v);
+        Cloth* v = new Cloth(dim, test.triSize, test.startPos[i], a, _vManager, test.angles[i]);
+        _vManager->addVerlet(v);
         v->createLink(v->getCorner(0),v->getCorner(1));
         _cManager->addConstraint(new RotationConstraint(v->getCorner(0),a,center,radius,v,true));
         _cManager->addConstraint(new RotationConstraint(v->getCorner(1),a,center,radius,v,true));
     }
 
-    Verlet* c1 = _manager->getVerlet(0);
-    Verlet* c2 = _manager->getVerlet(1);
-    Verlet* c3 = _manager->getVerlet(2);
-    Verlet* c4 = _manager->getVerlet(3);
+    Verlet* c1 = _vManager->getVerlet(0);
+    Verlet* c2 = _vManager->getVerlet(1);
+    Verlet* c3 = _vManager->getVerlet(2);
+    Verlet* c4 = _vManager->getVerlet(3);
 
     _cManager->addConstraint(new VerletConstraint(0,c1,0,c3));
     _cManager->addConstraint(new VerletConstraint(0,c1,8,c3));
@@ -55,60 +55,3 @@ VerletTest2::VerletTest2(Screen* s): VerletLevel(s){
 }
 
 VerletTest2::~VerletTest2(){}
-
-void VerletTest2::onTick(float seconds){
-    //dragging
-    if(dragMode&&_manager->solve){
-        //Test: use axis of constraint to determine normal for plane that ray is intersected w/, for mouse pos
-        Vector3 normal = axis_coor[draggedConstraint->getAxis()];
-        draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),normal);
-
-        //draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),-1*_camera->getLook());
-        interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(_mouseSpeed, seconds));
-        draggedVerlet->setPos(draggedPoint,interpolate);
-    }
-    VerletLevel::onTick(seconds);
-}
-
-void VerletTest2::onDraw(Graphic *g){
-    //VISUALIZATION
-    //Interpolation
-    if(dragMode){
-        //draw mouse pos in cyan
-        g->setColor(Vector3(0,1,1));
-        g->transform(&Graphic::drawUnitSphere,draggedMouse,0,
-                     Vector3(.1,.1,.1));
-        //draw interpolated position in green
-        g->setColor(Vector3(0,1,0));
-        g->transform(&Graphic::drawUnitSphere,interpolate,0,
-                     Vector3(.1,.1,.1));
-    }
-    VerletLevel::onDraw(g);
-}
-
-//Set if constraint is manipulated
-void VerletTest2::mousePressEvent(QMouseEvent *event){
-    VerletLevel::mousePressEvent(event);
-
-    if(event->button() == Qt::LeftButton&& hit.hit){
-        _cManager->setSelection(hit.c);
-        dragMode = true;
-        draggedPoint = hit.id;
-        draggedVerlet = hit.v;
-        draggedConstraint = hit.c;
-        interpolate = hit.v->getPoint(hit.id);
-    }
-}
-
-void VerletTest2::mouseMoveEvent(QMouseEvent *event){
-    VerletLevel::mouseMoveEvent(event);
-}
-
-//Set if constraint is deselected
-void VerletTest2::mouseReleaseEvent(QMouseEvent *event){
-    VerletLevel::mouseReleaseEvent(event);
-    if(event->button() == Qt::LeftButton){
-        dragMode = false;
-        _cManager->resetSelection();
-    }
-}

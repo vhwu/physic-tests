@@ -5,7 +5,7 @@
 #include "engine/common/entity.h"
 #include "constraintmanager.h"
 
-VerletManager::VerletManager(ConstraintManager *cm): Manager()
+VerletManager::VerletManager(World *w, ConstraintManager *cm): Manager(w)
 {
     _constraintManager = cm;
     //verlets = std::vector<Verlet*>();

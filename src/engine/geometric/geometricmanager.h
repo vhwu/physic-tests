@@ -13,7 +13,7 @@ class OBJ;
 class GeometricManager: public Manager
 {
 public:
-    GeometricManager(const QString &level, bool data);
+    GeometricManager(World *w, const QString &level, bool data);
     ~GeometricManager();
 
     void onTick(float seconds);

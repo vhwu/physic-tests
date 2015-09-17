@@ -5,7 +5,7 @@
 #include "engine/common/raytracer.h"
 #include "engine/common/entity.h"
 
-GeometricManager::GeometricManager(const QString &level, bool data)
+GeometricManager::GeometricManager(World* w, const QString &level, bool data): Manager(w)
 {
     _obj = new OBJ();
     QString prefix = ":/levels/level/level_";

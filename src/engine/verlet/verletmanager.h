@@ -13,7 +13,7 @@ class ConstraintManager;
 class VerletManager: public Manager
 {
 public:
-    VerletManager(ConstraintManager* cm);
+    VerletManager(World* w, ConstraintManager* cm);
     ~VerletManager();
 
     void onTick(float seconds);

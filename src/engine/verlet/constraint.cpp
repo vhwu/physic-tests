@@ -1,5 +1,5 @@
 #include "constraint.h"
-
+#include "engine/common/camera.h"
 Constraint::Constraint(int i, Axis a, Verlet* verlet, bool s)
 {
     v = verlet;
@@ -16,6 +16,10 @@ Constraint::Constraint(int i, Axis a, Verlet* verlet, bool s)
 
 Constraint::~Constraint()
 {}
+
+Vector3 Constraint::getNormal(Camera* c){
+    return -1*c->getLook();
+}
 
 void Constraint::constrain(){}
 

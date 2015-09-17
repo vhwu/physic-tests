@@ -10,6 +10,7 @@
         //'Unspecified axis/es': those which player can't manipulate- 2 for translation, 1 for rotation, etc
     //currentPos: set in constructor, update in constrain()
     //constrain(): use solveAxis to determine value for all unspecified axis/es (details in .cpp)
+class Camera;
 class Constraint
 {
 public:
@@ -27,6 +28,7 @@ public:
     void setHover(bool h){hovered=h;}
     void setSelect(bool s){selected=s;}
     Vector3 getPos(){return currentPos;}
+    virtual Vector3 getNormal(Camera* c); //for dragging on right plane
 
     //void onHover(); //add sound effects/ other activation effects later
     //void onSelect();

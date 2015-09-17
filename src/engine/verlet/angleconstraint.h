@@ -14,8 +14,6 @@ public:
     ~AngleConstraint();
 
     void constrain();
-    void onDraw(Graphic *g);
-    Vector3 getPoint(float angle);
 private:
     float angle;
     RotationConstraint* rc;

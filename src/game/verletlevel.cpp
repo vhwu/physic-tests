@@ -1,78 +1,107 @@
 #include "verletlevel.h"
+#include "engine/verlet/constraint.h"
+
 
 VerletLevel::VerletLevel(Screen *s): World(s),
     _height(3),
     _startPos(Vector3(-1,3,-1)),
     _mouseSpeed(0.12)
 {
-    _camera = new Camera(Vector2(800, 600), false);
-
     _player = new Player(_camera,_height);
     _player->setPos(_startPos);
     this->addEntity(_player);
 
     //MANAGERS
-    _cManager = new ConstraintManager();
+    _cManager = new ConstraintManager(this);
     this->addManager(_cManager);
-    _manager = new VerletManager(_cManager);
-    this->addManager(_manager);
-
-    //Raytracing while toggling between stationary + moveable mouse
-    if(mouseMove)
-        _ray = new RayTracer(_camera->modelview, mouseX, mouseY);
-    else
-        _ray = new RayTracer(_camera->getPos(), _camera->getLook());
+    _vManager = new VerletManager(this,_cManager);
+    this->addManager(_vManager);
 }
 
 VerletLevel::~VerletLevel()
-{
-    delete _ray;
-}
+{}
 
 void VerletLevel::onTick(float seconds){
-    //verlet collisions: offset player if not colliding with ground
-    _player->setMtv(_manager->collideTerrain(_player));
+    //Verlet collisions: offset player if not colliding with ground
+    _player->setMtv(_vManager->collideTerrain(_player));
     _player->move(_player->getMove());
 
-    //raytrace to find hovered point
-    if(mouseMove){
-        _ray->update(_camera->modelview, mouseX, mouseY);
-    }
-    else{
-        _ray->source = _camera->getPos();
-        _ray->direction = _camera->getLook();
-    }
-
+    //Selection
     HitTest trace;
     _cManager->rayTrace(_ray,trace);
     hit = trace;
+
+    if(dragMode){
+        Vector3 normal = selectedC->getNormal(_camera);
+        Verlet* draggedVerlet = selectedC->getVerlet();
+        int draggedPoint = selectedC->getIndex();
+        draggedMouse = _ray->getPointonPlane(draggedVerlet->getPoint(draggedPoint),normal);
+        interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(_mouseSpeed, seconds));
+        draggedVerlet->setPos(draggedPoint,interpolate);
+    }
 
     World::onTick(seconds);
 }
 
 void VerletLevel::onDraw(Graphic *g){
     World::onDraw(g);
+
+    //Visualize mouse selection + interpolation
+    if(dragMode){
+        //draw mouse pos in cyan
+        g->setColor(Vector3(0,1,1));
+        g->transform(&Graphic::drawUnitSphere,draggedMouse,0,
+                     Vector3(.1,.1,.1));
+        //draw interpolated position in green
+        g->setColor(Vector3(0,1,0));
+        g->transform(&Graphic::drawUnitSphere,interpolate,0,
+                     Vector3(.1,.1,.1));
+    }
 }
 
-//Double click for freezing/ unfreezing
+//Right click for freezing/ unfreezing
+//Hover/ select
 void VerletLevel::mousePressEvent(QMouseEvent *event){
     World::mousePressEvent(event);
     //if(event->type() == QEvent::MouseButtonDblClick && event->button() == Qt::LeftButton)
     if(event->button()==Qt::RightButton)
-        _manager->enableSolve();
+        _vManager->enableSolve();
+
+    if(event->button() == Qt::LeftButton&& hit.hit){
+        selectedC = hit.c;
+        selectedC->setSelect(true);
+        dragMode = true;
+        interpolate = hit.v->getPoint(hit.id);
+    }
 }
 
 //Set if constraint is hovered
 void VerletLevel::mouseMoveEvent(QMouseEvent *event){
     World::mouseMoveEvent(event);
-    if(hit.hit)
-        _cManager->setHover(hit.c);
-    else
-        _cManager->resetHover();
+    if(hit.hit){
+        if((hoveredC!=NULL)&&(hoveredC!=hit.c)){
+            hoveredC->setHover(false);
+        }
+        hoveredC = hit.c;
+        hoveredC->setHover(true);
+    }
+    else if(hoveredC!=NULL){
+        hoveredC->setHover(false);
+        hoveredC = NULL;
+    }
 }
 
+//Reset constraint selection
 void VerletLevel::mouseReleaseEvent(QMouseEvent *event){
     World::mouseReleaseEvent(event);
+
+    if(event->button() == Qt::LeftButton){
+        if(dragMode){
+            selectedC->setSelect(false);
+            selectedC = NULL;
+        }
+        dragMode = false;
+    }
 }
 
 //Camera zoom

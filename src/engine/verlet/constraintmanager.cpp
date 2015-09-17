@@ -1,8 +1,9 @@
 #include "constraintmanager.h"
 #include "constraint.h"
+#include "engine/common/world.h"
+#include "engine/common/camera.h"
 
-
-ConstraintManager::ConstraintManager(): Manager()
+ConstraintManager::ConstraintManager(World* w): Manager(w)
 {
 }
 
@@ -43,22 +44,4 @@ bool ConstraintManager::rayTrace(RayTracer* ray, HitTest &result){
             result = temp;
     }
     return result.hit;
-}
-
-void ConstraintManager::setHover(Constraint *c){
-    c->setHover(true);
-}
-
-void ConstraintManager::setSelection(Constraint *c){
-    c->setSelect(true);
-}
-
-void ConstraintManager::resetHover(){
-    for(Constraint* c: constraints)
-        c->setHover(false);
-}
-
-void ConstraintManager::resetSelection(){
-    for(Constraint* c: constraints)
-        c->setSelect(false);
 }

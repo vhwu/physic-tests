@@ -12,7 +12,7 @@ class Constraint;
 class ConstraintManager: public Manager
 {
 public:
-    ConstraintManager();
+    ConstraintManager(World *w);
     ~ConstraintManager();
 
     void onTick(float seconds);
@@ -21,18 +21,9 @@ public:
 
     void addConstraint(Constraint *c);
     Constraint* getConstraint(int c){return constraints[c];}
+
     //Raytraces points for all constraints, and returns whether there was a hit
     bool rayTrace(RayTracer* ray, HitTest &result);
-
-    //SELECTION
-    //Sets hover to true for given constraint
-    void setHover(Constraint* c);
-    //Turns off hover for all constraints
-    void resetHover();
-    //Sets select to true for given constraint
-    void setSelection(Constraint* c);
-    //Turns off selected for all constraints
-    void resetSelection();
 private:
     //Verlet objects manager maintains
     std::vector<Constraint*> constraints;

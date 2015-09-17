@@ -2,7 +2,6 @@
 #define VERLETLEVEL_H
 
 #include "engine/common/world.h"
-#include "engine/common/raytracer.h"
 
 #include "engine/common/camera.h"
 #include "player.h"
@@ -17,12 +16,13 @@ class ConstraintManager;
 class Constraint;
 
 //Base Verlet level.
-//Handles: updating verlet, constraints, player, collision, raytracing for selection, camera controls
+//Handles: player, collision (player-verlet), selection, controls
 
 //Controls:
 //U: move player back to starting positions
 //F: freeze
-//LMB: hovering above selectable point, double click for freeze
+//LMB: hovering above selectable point
+//RMB: freeze/ unfreeze
 class VerletLevel:  public World
 {
 public:
@@ -38,18 +38,22 @@ public:
     void wheelEvent(QWheelEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
-
-    //For selection
-    HitTest hit;
-    RayTracer* _ray;
 protected:
     Player* _player;
     float _height;
-    VerletManager* _manager;
+    VerletManager* _vManager;
     ConstraintManager* _cManager;
     Vector3 _startPos;
 
+    //For selection
+    bool dragMode = false; //true if player selects point + holds LMB
+    //World-space pt: where cursor's ray intersects w/ draggedPoint's plane
+    Vector3 draggedMouse;
+    Vector3 interpolate;
     float _mouseSpeed;
+
+    Constraint* selectedC=NULL;
+    Constraint* hoveredC=NULL;
 };
 
 #endif // VERLETLEVEL_H

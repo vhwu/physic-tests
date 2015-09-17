@@ -9,6 +9,7 @@ class Manager;
 class Screen;
 
 #include "vector.h"
+#include "engine/common/raytracer.h"
 
 //Held within screen, holds entities and camera
 class World
@@ -32,6 +33,10 @@ public:
     virtual void onResize(const Vector2& size);
 
     bool endGame;
+
+    //For selection
+    HitTest hit;
+    RayTracer* _ray;
 protected:
     Camera* _camera;
     Screen* _screen;
