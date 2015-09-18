@@ -7,6 +7,7 @@ Constraint::Constraint(int i, Axis a, Verlet* verlet, bool s)
     index = i;
 
     selectable = s;
+    visPoint = s;
     selected = false;
     hovered = false;
 
@@ -46,26 +47,29 @@ void Constraint::assign(Axis a, Constraint *c){
     cede[a]=match;
 }
 
+void Constraint::assign(Axis a, float &f){
+    control[a]=&f;
+}
+
 float& Constraint::access(Axis a){
     return currentPos.xyz[a];
 }
 
 void Constraint::onDraw(Graphic* g){
     //Point: yellow if selectable, magenta if hovered, teal if selected
-    if(selectable){
-        g->setColor(Vector3(0,1,1));
+    if(visPoint){
+        if(selectable)
+            g->setColor(color);
+        else
+            g->setColor(Vector3(.5,.5,.5));
         if(hovered)
             g->setColor(Vector3(1,0,1));
         if(selected)
             g->setColor(Vector3(1,1,0));
+
         g->transform(&Graphic::drawUnitSphere,v->getPoint(index),0,
                      Vector3(.15,.15,.15));
     }
-//    else{
-//        g->setColor(Vector4(.5,.5,.5,.5));
-//        g->transform(&Graphic::drawUnitSphere,v->getPoint(index),0,
-//                     Vector3(.15,.15,.15));
-//    }
 }
 
 void Constraint::onTick(float ){}

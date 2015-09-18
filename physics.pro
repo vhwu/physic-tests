@@ -65,7 +65,8 @@ SOURCES += \
     src/game/verlettest4.cpp \
     src/engine/verlet/setupcircle.cpp \
     src/engine/common/circle.cpp \
-    src/game/verlettest5.cpp
+    src/game/verlettest5.cpp \
+    src/engine/verlet/alignconstraint.cpp
 
 HEADERS += \
     src/mainwindow.h \
@@ -113,7 +114,8 @@ HEADERS += \
     src/game/verlettest4.h \
     src/engine/verlet/setupcircle.h \
     src/engine/common/circle.h \
-    src/game/verlettest5.h
+    src/game/verlettest5.h \
+    src/engine/verlet/alignconstraint.h
 
 
 FORMS += src/mainwindow.ui

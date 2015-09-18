@@ -1,18 +1,32 @@
 #include "translationconstraint.h"
 #include "engine/common/graphic.h"
 
-TranslationConstraint::TranslationConstraint(int i, Axis a, float range, Verlet* verlet, bool s):
+TranslationConstraint::TranslationConstraint(int i, Axis a, float range,
+                                             Verlet* verlet, bool s,Position p):
     Constraint(i,a,verlet,s)
 {
     pinPos= v->getPoint(index);
     currentPos = pinPos;
     float pos = pinPos.xyz[a];
-    min = pos-range;
-    max = pos+range;
+
+    if(p==BOT){
+        min = pos;
+        max = pos+range*2;
+    }
+    else if(p==MID){
+        min = pos-range;
+        max = pos+range;
+    }
+    else{
+        max = pos;
+        min = pos-range*2;
+    }
 
     //By default, point the two axes the player doesn't control to pinPos
     control[prevA]=&pinPos.xyz[prevA];
     control[nextA]=&pinPos.xyz[nextA];
+
+    color = colors[0];
 }
 
 void TranslationConstraint::constrain(){
@@ -34,19 +48,21 @@ void TranslationConstraint::constrain(){
 
 void TranslationConstraint::onDraw(Graphic* g){
     //Range: gray if unselectable, yellow if selected, cyan if selectable
-    Vector3 minRange = currentPos;
-    minRange.xyz[axis]=min;
-    Vector3 maxRange = currentPos;
-    maxRange.xyz[axis]=max;
+    if(visRange){
+        Vector3 minRange = currentPos;
+        minRange.xyz[axis]=min;
+        Vector3 maxRange = currentPos;
+        maxRange.xyz[axis]=max;
 
-    if(selected)
-        g->setColor(Vector3(1,1,0));
-    else if(selectable)
-        g->setColor(Vector3(0,1,1));
-    else
-        g->setColor(Vector3(.5,.5,.5));
+        if(selected)
+            g->setColor(Vector3(1,1,0));
+        else if(selectable)
+            g->setColor(Vector3(0,1,1));
+        else
+            g->setColor(Vector3(.5,.5,.5));
 
-    g->drawLine(minRange,maxRange);
+        g->drawLine(minRange,maxRange);
+    }
     Constraint::onDraw(g);
 }
 

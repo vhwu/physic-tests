@@ -9,6 +9,8 @@ RotationConstraint::RotationConstraint(int i, Axis a, const Vector3& c, float r,
 
     //By default, point the axis the player doesn't control to center
     control[a]=&circle->getCenter().xyz[a];
+
+    color = colors[1];
 }
 
 RotationConstraint::~RotationConstraint()
@@ -36,12 +38,14 @@ void RotationConstraint::constrain(){
 
 void RotationConstraint::onDraw(Graphic* g){
     //Arc: gray if unselectable, teal if selectable, yellow if selected
-    if(selected)
-        g->setColor(Vector3(1,1,0));
-    else if(selectable)
-        g->setColor(Vector3(0,1,1));
-    else
-        g->setColor(Vector3(.5,.5,.5));
-    circle->onDraw(g);
+    if(visRange){
+        if(selected)
+            g->setColor(Vector3(1,1,0));
+        else if(selectable)
+            g->setColor(Vector3(0,1,1));
+        else
+            g->setColor(Vector3(.5,.5,.5));
+        circle->onDraw(g);
+    }
     Constraint::onDraw(g);
 }
