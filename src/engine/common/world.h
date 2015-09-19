@@ -22,6 +22,7 @@ public:
     virtual void onTick(float seconds);
     virtual void onDraw(Graphic *g)=0;
     virtual void onUI(Graphic*g);
+
     //Pass to specific entities, if necessary
     virtual void wheelEvent(QWheelEvent *event)=0;
     virtual void keyPressEvent(QKeyEvent *event)=0;
@@ -37,6 +38,8 @@ public:
     //For selection
     HitTest hit;
     RayTracer* _ray;
+
+    Vector3 getGravity(){return _gravity;}
 protected:
     Camera* _camera;
     Screen* _screen;

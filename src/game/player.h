@@ -9,13 +9,19 @@
 class Camera;
 class Graphic;
 class Ellipsoid;
+class World;
+
+enum PlayerControl
+{
+    W,A,S,D
+};
 
 //Controls player movements with WASD
 //Include in keyPressEvent and keyReleaseEvent
 class Player: public Entity
 {
 public:
-    Player(Camera* c, float height);
+    Player(Camera* c, World* w, float height);
     ~Player();
 
     Ellipsoid* getEllipsoid();
@@ -26,7 +32,7 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
-    //Updates position of player (+ attached camera) by _toMove, and resets _toMove
+    //Updates position of player by _toMove, and resets _toMove
     void move(const Vector3& translate);
     void onCollide(Entity *e, const Vector3 &mtv);
 
@@ -34,18 +40,22 @@ public:
     void resetPos(const Vector3 &pos);
 private:
     Camera* _camera;
+    World* _world;
     float _playerHeight;
 
-    float _goal, _dampen, _jumpVel;
+    bool onGround = false;
+    bool canJump = false;
+    int jumpCounter;  //for jumpDelay
+    int jumpDelay; //number of ticks player can jump for, after contact w/ ground
+    int jumpAcc;
 
-    bool _w;
-    bool _a;
-    bool _s;
-    bool _d;
-    bool _r;
-    bool _f;
+    int maxAcc; //acc cap to prevent phasing through cloth
+    bool controlOn [4]{false}; //WASD
 
-    bool onGround;
+    //Goal velocity
+    int controlGoal [4]{0}; //per-control counter for acceleration/ deceleration towards goal velocity
+    int curveScalar; //rate of acceleration/ deceleration
+    int curveLength; //how long the acceleration/ deceleration phase is
 };
 
 #endif // PLAYER_H

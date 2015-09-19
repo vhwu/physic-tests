@@ -8,7 +8,7 @@ VerletLevel::VerletLevel(Screen *s): World(s),
     _startPos(Vector3(0,0,0)),
     _mouseSpeed(0.12)
 {
-    _player = new Player(_camera,_height);
+    _player = new Player(_camera,this,_height);
     _player->setPos(_startPos);
     this->addEntity(_player);
 
@@ -23,70 +23,9 @@ VerletLevel::~VerletLevel()
 {}
 
 void VerletLevel::onTick(float seconds){
-    //Verlet collisions: offset player if not colliding with ground
-    Vector3 source = _player->getPos();
-    Vector3 direction = _player->getMove();
-    RayTracer* r = new RayTracer(source,direction);
-
-    //Raycast against verlets to find point
-    HitTest test;
-    bool hitVerlet = _vManager->rayTrace(r,test);
-
-    //If point if hit, raycast against point's triangles
-    HitTest test2;
-    bool hitTriangle;
-    if(hitVerlet){
-        std::vector<Tri*> hitTriMesh = test.v->triPP[test.id];
-        hitTriangle = r->hitMesh(hitTriMesh, test2);
-    }
-
-    //Find collision info from the triangle
-    float percent;
-    CollisionInfo c;
-    if(hitTriangle){
-        hitTri = test2.verletTri;
-        Triangle geoT = Triangle(hitTri->vertices[0],hitTri->vertices[1],hitTri->vertices[2]);
-        Ellipsoid* e = new Ellipsoid(source,Vector3(.5,.5,.5));
-        c = geoT.collide(e,direction);
-        percent = c.t;
-//        std::cout<<percent<<std::endl;
-        hitPoint = r->getPointonPlane(hitTri->vertices[0], hitTri->normal);
-        delete e;
-    }
-    delete r;
-
-
+    //Collision w/ verlet
     _player->setMtv(_vManager->collideTerrain(_player));
-    if(hitTriangle&&percent>0&&percent<1){
-//        collideTriangle(_player,c);
-//        _player->move(_player->getMove());
-        Vector3 normal = direction*-1;
-
-//        Vector3 normal = c.ellipsoid_normal;
-        normal.normalize();
-//        std::cout<<normal*.5<<std::endl;
-        if(normal.y<.99){
-            float diff = 1.0-normal.y;
-            normal+=Vector3(0,diff*.3,0);
-//            float diffx = 1.0-normal.x;
-//            normal+=Vector3(diffx*.1,0,0);
-//            float diffz = 1.0-normal.z;
-//            normal+=Vector3(0,0,diffz*.1);
-        }
-//        _player->setPos(hitPoint+normal*.5);
-
-//                _player->setPos(hitPoint+Vector3(0,.5,0));  //smooth at beginning
-
-
-//        _player->move(_player->getMove()*(1.0-percent));
-//        _player->setPos(hitPoint+Vector3(0,.5,0));
-//        _player->move(_player->getMove());
-    }
-//    else
-//        _player->move(_player->getMove());
-//    if((_player->getPos()-hitPoint).length()<.3)
-//        _player->setVel(Vector3(0,0,0));
-_player->move(_player->getMove());
+    _player->move(_player->getMove());
 
     //Selection
     HitTest trace;
@@ -101,9 +40,8 @@ _player->move(_player->getMove());
         interpolate = Vector3::lerp(interpolate, draggedMouse, 1 - powf(_mouseSpeed, seconds));
         draggedVerlet->setPos(draggedPoint,interpolate);
     }
+
     World::onTick(seconds);
-
-
 }
 
 void VerletLevel::collideTriangle(Entity* e, CollisionInfo c){

@@ -8,7 +8,7 @@
 #include <iostream>
 
 World::World(Screen* s):
-    _gravity(Vector3(0,-3,0))
+    _gravity(Vector3(0,-9.8,0))
 {
     _screen = s;
     endGame = false;
