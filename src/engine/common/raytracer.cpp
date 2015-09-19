@@ -206,6 +206,46 @@ bool RayTracer::hitVerlet(Verlet* verlet, QList<int> points, HitTest &result){
     return h;
 }
 
+bool RayTracer::hitTriangle(Tri* tri, HitTest &result){
+    if(tri==NULL)
+        return false;
+
+    float t = -(tri->normal.dot(source-tri->vertices[1]))/(tri->normal.dot(direction));
+
+    if(t>0){   //check if ray points towards triangle
+        Vector3 v1 = tri->vertices[0]-source;
+        Vector3 v2 = tri->vertices[1]-source;
+        Vector3 v3 = tri->vertices[2]-source;
+
+        Vector3 cross1 = v1.cross(v2);
+        Vector3 cross2 = v2.cross(v3);
+        Vector3 cross3 = v3.cross(v1);
+
+        //check if point where ray intersects w/ plane triangle is on, is in triangle
+        if(!(cross1.dot(direction)>0) && !(cross2.dot(direction)>0) && !(cross3.dot(direction)>0)){
+            result.hit = true;
+            result.t = t;
+            result.normal = tri->normal;
+            result.verletTri = tri;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool RayTracer::hitMesh(std::vector<Tri *> triangles, HitTest &result){
+    bool h = false;
+    for (Tri* t: triangles){
+        HitTest temp;
+        bool hit = hitTriangle(t,temp);
+        if(hit&&(temp.t<result.t)){
+            h = true;
+            result = temp;
+        }
+    }
+    return h;
+}
+
 bool RayTracer::hitConstraint(Constraint *c, HitTest &result){
     int index = c->getIndex();
     Verlet* v = c->getVerlet();

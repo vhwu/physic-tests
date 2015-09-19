@@ -8,7 +8,8 @@ RotationConstraint::RotationConstraint(int i, Axis a, const Vector3& c, float r,
     currentPos = v->getPoint(i);
 
     //By default, point the axis the player doesn't control to center
-    control[a]=&circle->getCenter().xyz[a];
+    float& f = circle->getCenter().xyz[a];
+    control[a]=&f;
 
     color = colors[1];
 }
@@ -26,8 +27,9 @@ void RotationConstraint::constrain(){
     Vector3 p = v->getPoint(index);
 
     //For non-specified axis: solve it, or defer solving to another constraint
-    p.xyz[axis] = solveAxis(axis,p.xyz[axis]);
-    circle->setCenter(axis,p.xyz[axis]);
+    float s = solveAxis(axis,p.xyz[axis]);
+    p.xyz[axis] = s;
+    circle->setCenter(axis,s);
 
     //For two axes: ensure they're on the circumference of the rotation's circle
     Vector3 onCircle = circle->onCircumference(p);

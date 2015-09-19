@@ -51,6 +51,9 @@ Cloth::Cloth(const Vector2 &dimension, float w,
         }
     }
 
+    //***************************************************TESTING COLLISIONS
+    triPP.resize(numPoints);
+
     //Create structural links
     //|\/\/|       | / /        \ \ |
     //|/\/\|       | \ \        / / |
@@ -142,6 +145,13 @@ void Cloth::triangulate(int a, int b, int c){
     Tri* t = new Tri(a,b,c);
     calculate(t);
     _triangles.push_back(t);
+    //***************************************************TESTING COLLISIONS
+    std::vector<Tri*>& list1 = triPP[a];
+    list1.push_back(t);
+    std::vector<Tri*>& list2 = triPP[b];
+    list2.push_back(t);
+    std::vector<Tri*>& list3 = triPP[c];
+    list3.push_back(t);
 }
 
 Cloth::~Cloth()
@@ -158,7 +168,7 @@ void Cloth::onTick(float ){
 }
 
 void Cloth::onDraw(Graphic* g){
-    //Verlet::onDraw(g);
+//    Verlet::onDraw(g);
 
     g->cull(false);
     for(Tri* t: _triangles){

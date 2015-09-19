@@ -10,6 +10,11 @@
         //'Unspecified axis/es': those which player can't manipulate- 2 for translation, 1 for rotation, etc
     //currentPos: set in constructor, update in constrain()
     //constrain(): use solveAxis to determine value for all unspecified axis/es (details in .cpp)
+
+//Ex assigning controls to other constraints, w/o access():
+    //float& f = circle->getCenter().xyz[a];
+    //control[a]=&f;
+
 class Camera;
 class Constraint
 {

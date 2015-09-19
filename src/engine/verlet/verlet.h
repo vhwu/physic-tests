@@ -61,6 +61,11 @@ public:
     virtual void onDraw(Graphic *g);
     void drawLink(Link* l, Graphic* g);
     void drawGradientLink(Link* l, Graphic* g);
+
+    //***************************************************TESTING COLLISIONS
+//    QHash<int, QList<Tri*> > link_to_tri;
+//    Qlist<Tri*> _triPP[NUM]; //triangles per point
+    std::vector<std::vector<Tri*> > triPP;
 protected:
     //Setting triangle vertices + normals after movement
     void calculate(Tri* t);

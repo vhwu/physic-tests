@@ -9,7 +9,7 @@ Player::Player(Camera* c, float height): Entity()
     _camera = c;
     _playerHeight = height;
 
-    _goal =7; //4;
+    _goal =4; //4;
     _dampen = .95f;
     _jumpVel = 6;
 
@@ -34,6 +34,11 @@ Ellipsoid* Player::getEllipsoid(){
 
 void Player::onTick(float seconds)
 {
+    float gravity = -8;
+    _goal =100;
+
+    onGround = _mtv.y>0;
+
     //velocity along the ground plane
     Vector3 goalV = Vector3(0,0,0);
     if(_w) goalV+=_camera->getForward()*_goal;
@@ -43,12 +48,35 @@ void Player::onTick(float seconds)
     if(_r) goalV+=Vector3(0,3.0,0)*_goal;
     if(_f) goalV+=Vector3(0,-1.0,0)*_goal;
 
-    _acc += goalV-_vel;
-    onGround = _mtv.y>0;
+    //Force due to player input
+//    _acc += goalV-_acc;
+    _acc += goalV; //-_acc;
 
-    Entity::onTick(seconds);
 
-    //this->move(this->_toMove);
+    //Gravity- applied if player is in the air
+    if(!onGround)
+        _acc.y += gravity;
+    if(onGround)
+        _acc.y -= gravity; //works better than just not applying gravity
+
+    //Clamp force, so as to not pass through cloth
+    float max = 300; //at 400, player passes through cloth
+    _acc.y = clamp(_acc.y,-max,max);
+    _acc.x = clamp(_acc.x,-max,max);
+    _acc.z = clamp(_acc.z,-max,max);
+
+    //Velocity
+    _vel = _acc*seconds;
+    Vector3 translate =seconds*_vel + .5f*_acc*seconds*seconds;
+    _toMove = translate;
+
+    //Erase horizontal
+    _acc-=goalV;
+
+    //Update camera
+    _camera->moveTo(_shape->getPos()+Vector3(0,_playerHeight,0));
+
+    //this->move(this->_toMove);  //automatic movement
 }
 
 void Player::onCollide(Entity *e, const Vector3& mtv){
@@ -57,7 +85,6 @@ void Player::onCollide(Entity *e, const Vector3& mtv){
 
 void Player::move(const Vector3& translate){
     _shape->translate(translate);
-    _camera->moveTo(_shape->getPos()+Vector3(0,_playerHeight,0));
     _toMove = Vector3(0,0,0);
 }
 
@@ -82,7 +109,8 @@ void Player::keyPressEvent(QKeyEvent *event)
         if(event->key() == Qt::Key_R) _r=true;
         if(event->key() == Qt::Key_F) _f=true;
         if(event->key() == Qt::Key_Space && onGround) {
-            _vel= Vector3(_vel.x,_jumpVel,_vel.z);
+//            _vel= Vector3(_vel.x,_jumpVel,_vel.z);
+            _acc+=Vector3(0,300,0);
         }
     if(event->key() == Qt::Key_P) _camera->changePerson();
 }

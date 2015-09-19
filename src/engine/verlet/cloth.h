@@ -21,7 +21,6 @@ public:
     bool visualize = false;  //Set to true to visualize color-coded corners: RGB White
     int getCorner(int c); //Returns index of corners (0-3)
     void pinCorners(); //Pins all corners
-
 private:
     //Called in constructor to add triangles
     void triangulate(int a, int b, int c);

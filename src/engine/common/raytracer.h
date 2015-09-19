@@ -2,12 +2,12 @@
 #define RAYTRACER_H
 
 #include "vector.h"
+#include "engine/verlet/verlet.h"
 #include <vector>
 #include <QList>
 
 class Triangle;
 class Ellipsoid;
-class Verlet;
 class Constraint;
 
 struct HitTest
@@ -19,6 +19,7 @@ struct HitTest
     Triangle* tri; //for triangle + mesh collisions
     Verlet* v;  //for verlet collisions
     Constraint* c;  //for constraint collisions
+    Tri* verletTri;
 
     HitTest() : hit(false), t(INFINITY), id(-1), tri(NULL), v(NULL) {}
     HitTest(bool h, float f, Triangle* tr){hit = h; t=f; tri=tr;}
@@ -51,6 +52,8 @@ public:
     bool hitMesh(std::vector<Triangle*> triangles, HitTest &result);
     bool hitTriangle(Triangle* t, HitTest &result);
     bool hitTriangle(Triangle t, HitTest &result);
+    bool hitTriangle(Tri* t, HitTest &result);
+    bool hitMesh(std::vector<Tri *> t, HitTest &result);
     bool hitMesh(std::vector<Triangle> t, HitTest &result);
     bool hitVerlet(Verlet* t, HitTest &result);
     bool hitVerlet(Verlet* t, QList<int> points, HitTest &result);

@@ -18,7 +18,7 @@ public:
 
     Vector3 getNormal(Camera* );
     Circle* getCircle(){return circle;}
-private:
+protected:
     Circle* circle;
 };
 

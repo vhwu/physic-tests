@@ -8,7 +8,7 @@
 #include <iostream>
 
 World::World(Screen* s):
-    _gravity(Vector3(0,-6,0))
+    _gravity(Vector3(0,-3,0))
 {
     _screen = s;
     endGame = false;
@@ -34,7 +34,7 @@ World::~World()
 void World::onTick(float seconds)
 {
     foreach (Entity* e, _entities){
-        e->applyAcc(_gravity);
+//        e->applyAcc(_gravity);
         e->onTick(seconds);
     }
     foreach (Entity* e, _entities){

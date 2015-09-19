@@ -63,9 +63,8 @@ VerletTest5::VerletTest5(Screen *s):VerletLevel(s)
 
         v->createLink(v->getCorner(0),v->getCorner(1));
 
-        //For automating height
-        r->assign(Y,align->translations[i-1]);
-        angle->assign(Y,align->translations[i-1]);
+        r->assign(Y,align->access(i-1));
+        angle->assign(Y,align->access(i-1));
     }
 }
 

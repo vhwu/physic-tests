@@ -14,10 +14,11 @@ public:
     ~AlignConstraint();
 
     void constrain();
-    float translations[20];
+    float& access(int a){return translations[a];}
 private:
     TranslationConstraint* tc;
     int numDivisions;
+    float translations[20]; //arbitrary max number of divisions
 };
 
 #endif // ALIGNCONSTRAINT_H

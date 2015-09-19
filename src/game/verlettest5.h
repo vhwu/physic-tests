@@ -3,8 +3,7 @@
 
 #include "verletlevel.h"
 
-//Staircase: testing angle + rotation + translation constraints in conjunction
-class TranslationConstraint;
+//Staircase: testing angle + rotation + translation + align constraints in conjunction
 class VerletTest5: public VerletLevel
 {
 public:

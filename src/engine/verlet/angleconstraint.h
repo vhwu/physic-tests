@@ -10,7 +10,7 @@ class RotationConstraint;
 class AngleConstraint: public Constraint
 {
 public:
-    AngleConstraint(int i, Verlet* v, RotationConstraint *rc, bool s=false);
+    AngleConstraint(int i, Verlet* v, RotationConstraint *rc);
     ~AngleConstraint();
 
     void constrain();

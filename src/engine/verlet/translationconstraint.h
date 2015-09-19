@@ -21,7 +21,7 @@ public:
 
     float getMin(){return min;}
     float getMax(){return max;}
-private:
+protected:
     Vector3 pinPos; //Original position, to reference for 2 axis that don't change
     float min;
     float max;

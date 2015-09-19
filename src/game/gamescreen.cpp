@@ -2,10 +2,9 @@
 #include "engine/common/screen.h"
 #include "view.h"
 #include "verlettest1.h"
-#include "verlettest2.h"
-#include "verlettest3.h"
 #include "verlettest4.h"
 #include "verlettest5.h"
+#include "verlettest6.h"
 #include "engine/common/application.h"
 
 #include <iostream>
@@ -18,16 +17,14 @@ GameScreen::GameScreen(View* v, Application* a): Screen(v, a)
 
 void GameScreen::create(int m){
     mode = m;
-    if(mode==1)
+    if(mode==1) //Translation -> wave propagation
         _world = new VerletTest1(this);
-    else if(mode==2)
-        _world = new VerletTest2(this);
-    else if(mode==3)
-        _world = new VerletTest3(this);
-    else if(mode==4)
+    else if(mode==2) //Rotation -> kaleidoscope
         _world = new VerletTest4(this);
-    else if(mode==5)
+    else if(mode==3) //Translation + rotation -> staircase
         _world = new VerletTest5(this);
+    else if(mode==4)
+        _world = new VerletTest6(this);
 }
 
 GameScreen::~GameScreen()
@@ -44,8 +41,6 @@ void GameScreen::tick(float seconds)
 
 void GameScreen::onDraw(Graphic *g)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     glColor3f(1,1,1);
     _view->renderText(0,10,
                        "Camera: move (MMB drag) and zoom (MMB scroll)", _view->font());

@@ -1,8 +1,8 @@
 #include "angleconstraint.h"
 #include "rotationconstraint.h"
 
-AngleConstraint::AngleConstraint(int i, Verlet* verlet, RotationConstraint* r, bool s):
-    Constraint(i,r->getAxis(),verlet,s)
+AngleConstraint::AngleConstraint(int i, Verlet* verlet, RotationConstraint* r):
+    Constraint(i,r->getAxis(),verlet,false)
 {
     rc = r;
     currentPos = verlet->getPoint(index);
