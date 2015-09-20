@@ -1,6 +1,5 @@
 #include "verletlevel.h"
 #include "engine/verlet/constraint.h"
-#include "engine/geometric/triangle.h"
 #include "engine/common/ellipsoid.h"
 
 VerletLevel::VerletLevel(Screen *s): World(s),
@@ -17,6 +16,18 @@ VerletLevel::VerletLevel(Screen *s): World(s),
     this->addManager(_cManager);
     _vManager = new VerletManager(this,_cManager);
     this->addManager(_vManager);
+
+    //CONTROLLING AVATAR-ENVIRONMENT INTERACTION: uncomment to change from defaults
+    _player->setJump(7);            //Default: 7    Controls:velocity.y upon jump
+    //Player goal velocity
+    _player->setCurveLength(60);    //Default:60    Controls:# of ticks for WASD acceleration/deceleration
+    _player->setCurveScalar(3);     //Default:3     Controls:rate of WASD acceleration/deceleration
+    //Minimize phasing through cloth
+    _player->setMaxVel(8);          //Default:8     Controls:'terminal velocity', so player doesn't go too fast
+    _player->setNormalScalar(.4);   //Default:.4    Controls:force applied upon contact w/ surface.
+            //1 = no influence upon environment
+    //Controls
+    _mouseSpeed = .12;               //Default:.12   Controls: speed of mouse interpolation
 }
 
 VerletLevel::~VerletLevel()
@@ -44,43 +55,7 @@ void VerletLevel::onTick(float seconds){
     World::onTick(seconds);
 }
 
-void VerletLevel::collideTriangle(Entity* e, CollisionInfo c){
-    Vector3 move = e->getMove();
-    //With ramp hack
-    Vector3 newVel;
-    Vector3 remaining = move*(1-c.t);
-    Vector3 normal = c.ellipsoid_normal;
-    normal.normalize();
-    Vector3 up = Vector3(0,1,0);
-    if(up.dot(normal)==0)
-        newVel = remaining-(remaining.dot(normal))*normal;
-    else{
-        float scalar = normal.dot(remaining)/ normal.dot(up);
-        Vector3 direction = remaining-up*scalar;
-        float length = (remaining - (normal.dot(remaining))*normal).length();
-        newVel = direction;
-        newVel.normalize();
-        newVel*=length;
-    }
-
-    //Move and set the new displacement
-    Vector3 toMove = e->getMove()*c.t;
-    e->move(toMove);
-    e->move(.001*c.ellipsoid_normal);
-    e->setMove(newVel);
-}
-
 void VerletLevel::onDraw(Graphic *g){
-    if(hitTri!=NULL){
-        g->cull(false);
-        g->setColor(Vector3(1,0,0));
-        g->drawTriangle(hitTri->vertices,hitTri->normal);
-        g->cull(true);
-
-//        g->transform(&Graphic::drawUnitSphere,hitPoint,0,
-//                     Vector3(.15,.15,.15));
-    }
-
     World::onDraw(g);
 
     //Visualize mouse selection + interpolation

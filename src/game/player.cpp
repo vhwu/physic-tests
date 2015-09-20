@@ -10,10 +10,11 @@ Player::Player(Camera* c, World* w, float height): Entity(),
     _world(w),
     _playerHeight(height),
     jumpDelay(3),
-    jumpAcc(300),
+    jumpVel(7),
+    normalForceScalar(.4),
     curveScalar(3),
     curveLength(60),
-    maxAcc(300)
+    maxVel(8)
 {
     _shape = new Ellipsoid(Vector3(0,0,0), Vector3(.5,.5,.5));
 }
@@ -29,6 +30,9 @@ Ellipsoid* Player::getEllipsoid(){
 
 void Player::onTick(float seconds)
 {
+    _vel.x=0;
+    _vel.z=0;
+
     //Check if player is on ground
     //If so, can jump for the next X (jumpDelay) ticks
     onGround = _mtv.y>0;
@@ -38,8 +42,12 @@ void Player::onTick(float seconds)
     }
     else if(jumpCounter>0)
         jumpCounter--;
-    else
+    else{
         canJump = false;
+        verletAcc=Vector3(0,0,0);
+    }
+
+    _acc = Vector3(0,0,0);
 
     //Calculate horizontal force- from player input + goal velocity
     //Note: kept separate from vertical acc b/c horizontal acc is dependent on camera angle,
@@ -49,6 +57,7 @@ void Player::onTick(float seconds)
         Vector3 dir;
         if(i==W)dir = _camera->getForward();
         if(i==A)dir = _camera->getLeft();
+//        if(i==A)dir = Vector3(0,-1,0);
         if(i==S)dir = _camera->getBackward();
         if(i==D)dir = _camera->getRight();
 
@@ -65,25 +74,31 @@ void Player::onTick(float seconds)
     if(!onGround)
         _acc += _world->getGravity();
     if(onGround)
-        _acc -= _world->getGravity(); //works better than just not applying gravity
-
-    //Clamp force, so as to not pass through cloth
-    _acc.y = clamp(_acc.y,-maxAcc,maxAcc);
-    _acc.x = clamp(_acc.x,-maxAcc,maxAcc);
-    _acc.z = clamp(_acc.z,-maxAcc,maxAcc);
+        _acc -= _world->getGravity()*normalForceScalar; //*.4;
 
     //Calculate velocity
-    _vel = _acc*seconds;
-    Vector3 translate =seconds*_vel + .5f*_acc*seconds*seconds;
-    _toMove = translate;
+    _vel += _acc*seconds;
 
-    //Erase horizontal acc, so it can be overwritten next tick
-    _acc-=horizontalAcc;
+    //TEST
+    float vScalar = 155;// 155; //295;
+//    _vel += verletAcc*vScalar*seconds;
+    _vel+=verletAcc*(1.0/seconds);
+
+    //Clamp vel, so as to not pass through cloth
+//    _vel.y = clamp(_vel.y,-maxVel,maxVel);
+        if(_vel.y<-8)
+            _vel.y=-8;
+    _vel.x = clamp(_vel.x,-maxVel,maxVel);
+    _vel.z = clamp(_vel.z,-maxVel,maxVel);
+
+    _toMove  = seconds*_vel;
+
+//    Erase horizontal vel, so it can be overwritten next tick
+//    _vel -= verletAcc*seconds*vScalar;
 
     //Update camera
     _camera->moveTo(_shape->getPos()+Vector3(0,_playerHeight,0));
 
-    //this->move(this->_toMove);  //automatic movement
 }
 
 void Player::onCollide(Entity *e, const Vector3& mtv){
@@ -113,9 +128,8 @@ void Player::keyPressEvent(QKeyEvent *event)
         if(event->key() == Qt::Key_S) controlOn[S]=true;
         if(event->key() == Qt::Key_A) controlOn[A]=true;
         if(event->key() == Qt::Key_D) controlOn[D]=true;
-        if(event->key() == Qt::Key_Space && canJump) {
-            _acc.y=jumpAcc;
-        }
+        if(event->key() == Qt::Key_Space && canJump)
+            _vel.y=jumpVel;
     if(event->key() == Qt::Key_P) _camera->changePerson();
 }
 

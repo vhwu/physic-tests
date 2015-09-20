@@ -48,6 +48,7 @@ public:
 
     virtual void onCollide(Entity *, const Vector3& mtv);
     Collision collide(Entity* e);
+    Vector3 verletAcc;
 protected:
     Shape* _shape;
     Vector3 _vel, _acc;

@@ -56,7 +56,8 @@ void Verlet::verlet(float seconds){
         //apply gravity
         Vector3& acc = _acc[i]+=_manager->gravity;
         //update positions
-        pos += .99*(pos-prevPos)+acc*seconds*seconds;
+        Vector3 vel = pos-prevPos;
+        pos += .99*vel+acc*seconds*seconds;
         prevPos = temp;
         //reset
         _acc[i]=Vector3(0,0,0);
@@ -98,6 +99,9 @@ void Verlet::calculate(Tri* t){
 Vector3 Verlet::collide(Entity *e){
     Ellipsoid* el = e->getEllipsoid();
     Vector3 toMove = e->getMove();
+    Vector3 force = e->getAcc();
+        if(force.y<0)
+            force.y = force.y*=3;
 
     Vector3 center = el->getPos()+toMove;
     float radius = e->getDim().x;
@@ -106,6 +110,10 @@ Vector3 Verlet::collide(Entity *e){
 
     float count = 0;  //how many points hit
     Vector3 translation = Vector3(0,0,0); //accumulative mtv
+    Vector3 velocity = Vector3(0,0,0); //accumulative velocity
+
+    //TESTING
+    Vector3 vel = Vector3(0,0,0);
 
     for(int i=0; i<numPoints; i++) {
         Vector3 dist =_pos[i]-center; //distance between entity + point
@@ -122,6 +130,27 @@ Vector3 Verlet::collide(Entity *e){
             if(solve)
                 _pos[i]=_pos[i]-(extra*sphereInfluence);
             translation+=extra;
+
+            //TESTING
+//            _acc[i]+=force;
+
+            vel = _pos[i]-_prevPos[i];
+            velocity += vel;
+
+//            if(vel.y>0&&factor<-.14){
+//                factor*=-1;
+//                std::cout<<"test:"<<factor<<std::endl;
+//                float text = factor-.14;
+//                text*=8;
+//                translation.y+=text;
+//                if(factor>.17){
+//                    Vector3 v = e->getVel();
+//                    v.y+=((factor-.17)*300);
+//                    e->setVel(v);
+//                std::cout<<"jump"<<std::endl;
+//                }
+//            }
+
         }
      }
 
@@ -130,6 +159,78 @@ Vector3 Verlet::collide(Entity *e){
         count *= .5;
         translation/=count; //divide accumulative mtv by points hit
     }
+    if(_manager->solve&&count>0){
+//        std::cout<<velocity<<std::endl;
+//        std::cout<<"v:"<<e->getVel()<<std::endl;
+        Vector3 horizontal = Vector3(velocity.x,0,velocity.z);
+        horizontal = horizontal/(count*2);
+
+        e->verletAcc=horizontal;//*60;
+
+//        Vector3 actualVel = e->getVel();
+//        actualVel.y = 0;
+//        float align = 0;
+
+//        Vector3 currAcc = e->verletAcc;
+//        currAcc.y = 0;
+
+//        if(actualVel.lengthSquared()>0 && horizontal.lengthSquared()>0){
+//            Vector3 h = horizontal;
+//            Vector3 a = actualVel;
+//            h.normalize();
+//            a.normalize();
+////            horizontal.normalize();
+////            actualVel.normalize();
+
+////            align = a.dot(h);
+//            align = actualVel.dot(horizontal);
+
+////            if(currAcc.lengthSquared()>0)
+////                currAcc.normalize();
+//////            horizontal.normalize();
+////            std::cout<<"curr acc:"<<currAcc<<std::endl;
+////            std::cout<<"ver acc:"<<horizontal<<std::endl;
+////            if(currAcc.lengthSquared()>0)
+////            std::cout<<currAcc.dot(horizontal)<<std::endl;
+//            std::cout<<"align:"<<align<<std::endl;
+//                 std::cout<<"v length:"<<horizontal.length()<<std::endl;
+//           std::cout<<"p length:"<<actualVel.length()<<std::endl;
+
+
+//           float scalar = (align+1)*.5;
+
+//           float l = horizontal.length();
+//           float p = actualVel.length();
+//           if(p<=0.0001)
+//               p=2.38;
+//   //        float lengthScalar = 290;
+//   //        if(actualVel.length()>0)
+//   //            lengthScalar = horizontal.length()/actualVel.length();
+//   //        std::cout<<"length scale:"<<lengthScalar<<std::endl;
+//           std::cout<<"verlet mag:"<<horizontal.length()<<std::endl;
+////           if(horizontal.lengthSquared()!=0){
+
+////               //verlet mag:.03 - .04
+////               //framerate: .015
+////               horizontal.normalize();
+////               //figure out magnitude ratio, and alos remember about + versus - dots
+////           }
+//   //        e->verletAcc=horizontal*(1-scalar); //*lengthScalar;
+////           std::cout<<12/l<<std::endl;
+//           e->verletAcc=horizontal*100;//*(6.5/l);//*(3.6/l);//*(1-scalar); //*lengthScalar;
+
+
+//   //        std::cout<<"scalar:"<<1-scalar<<std::endl;
+//           std::cout<<e->verletAcc<<std::endl;
+//           //you need to isolate out another horizontal acceleration: 'verlet'
+//           //actually, maybe you need a variable for horizontal vel (both control and verlet)... so you add them, and get dot
+//           //though, what do you do once you leave the verlet? how to you make verletAcc degrade?
+        }
+//        else{
+//            e->verletAcc=Vector3(0,0,0);
+//        }
+
+//    }
 
     toMove+=translation;
     e->setMove(toMove);

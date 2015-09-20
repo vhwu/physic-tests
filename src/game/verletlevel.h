@@ -9,7 +9,6 @@
 #include "engine/verlet/verletmanager.h"
 #include "engine/verlet/constraintmanager.h"
 #include "engine/verlet/cloth.h"
-#include "engine/geometric/collisioninfo.h"
 
 class Player;
 class VerletManager;
@@ -39,11 +38,6 @@ public:
     void wheelEvent(QWheelEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
-
-    //*******************************TESTING COLLISIONS
-    Tri* hitTri = NULL;
-    Vector3 hitPoint = Vector3(0,0,0);
-    void collideTriangle(Entity* e, CollisionInfo c);
 protected:
     Player* _player;
     float _height;

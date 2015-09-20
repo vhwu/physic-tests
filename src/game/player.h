@@ -35,9 +35,13 @@ public:
     //Updates position of player by _toMove, and resets _toMove
     void move(const Vector3& translate);
     void onCollide(Entity *e, const Vector3 &mtv);
+    void resetPos(const Vector3 &pos); //Sets pos and cancels out any velocity/ acceleration
 
-    //Sets player position and cancels out any velocity/ acceleration
-    void resetPos(const Vector3 &pos);
+    void setJump(int j){jumpVel=j;}
+    void setCurveScalar(int s){curveScalar=s;}
+    void setCurveLength(int l){curveLength = l;}
+    void setMaxVel(int v){maxVel=v;}
+    void setNormalScalar(float n){normalForceScalar=n;}
 private:
     Camera* _camera;
     World* _world;
@@ -47,9 +51,10 @@ private:
     bool canJump = false;
     int jumpCounter;  //for jumpDelay
     int jumpDelay; //number of ticks player can jump for, after contact w/ ground
-    int jumpAcc;
+    int jumpVel;
 
-    int maxAcc; //acc cap to prevent phasing through cloth
+    float normalForceScalar; //determines fraction of force applied upon contact w/ surface
+    int maxVel; //acc cap to prevent phasing through cloth
     bool controlOn [4]{false}; //WASD
 
     //Goal velocity
