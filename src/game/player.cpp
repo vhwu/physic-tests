@@ -3,18 +3,20 @@
 #include "engine/common/graphic.h"
 #include "engine/common/ellipsoid.h"
 #include "engine/common/world.h"
+#include "engine/verlet/verletmanager.h"
 
-
-Player::Player(Camera* c, World* w, float height): Entity(),
+Player::Player(Camera* c, World* w, VerletManager* v, float height): Entity(),
     _camera(c),
     _world(w),
+    _vm(v),
     _playerHeight(height),
     jumpDelay(3),
     jumpVel(7),
-    normalForceScalar(.4),
-    curveScalar(3),
+    normalForceScalar(5),
+    maxVel(15),
+    curveScalar(4),
     curveLength(60),
-    maxVel(8)
+    verletLength(60)
 {
     _shape = new Ellipsoid(Vector3(0,0,0), Vector3(.5,.5,.5));
 }
@@ -36,16 +38,32 @@ void Player::onTick(float seconds)
     //Check if player is on ground
     //If so, can jump for the next X (jumpDelay) ticks
     onGround = _mtv.y>0;
+    if(onGround&&!onVerlet&&_vm->solve){
+        verletCounter=0;
+        verletAcc=Vector3(0,0,0);
+    }
     if(onGround){
         canJump = true;
+        onVerlet = true;
         jumpCounter = jumpDelay;
     }
     else if(jumpCounter>0)
         jumpCounter--;
     else{
         canJump = false;
-        verletAcc=Vector3(0,0,0);
+//        verletAcc=Vector3(0,0,0);
+        onVerlet=false;
     }
+    if(!_vm->solve)
+        onVerlet = false;
+
+    if(onVerlet&&verletCounter<verletLength){
+        verletCounter++;
+    }
+    else if(!onVerlet&&verletCounter>0){
+        verletCounter--;
+    }
+//    std::cout<<verletCounter<<std::endl;
 
     _acc = Vector3(0,0,0);
 
@@ -70,31 +88,85 @@ void Player::onTick(float seconds)
     }
     _acc += horizontalAcc;
 
+    //Verlet influence test
+    Vector3 testAcc =  verletAcc*(1.0/seconds); //velocity
+    testAcc = testAcc/seconds; //acc
+    float fraction = (float)verletCounter/verletLength;
+    testAcc = testAcc*fraction;
+    _acc += testAcc;
+
     //Calculate vertical force (gravity)- applied if player is in the air
-    if(!onGround)
+/*    if(onVerlet&&!onGround){
+        Vector3 m = _mtv;
+        if(m.lengthSquared()>0)
+            m.normalize();
+        _acc += m*normalForceScalar;
         _acc += _world->getGravity();
-    if(onGround)
-        _acc -= _world->getGravity()*normalForceScalar; //*.4;
+    }
+    else */
+//    if(onVerlet){
+    if(onGround){
+
+        Vector3 m = _mtv;
+        Vector3 a = _acc;
+        if(m.lengthSquared()>0)
+            m.normalize();
+        if(a.lengthSquared()>0)
+            a.normalize();
+//        if(a.lengthSquared()>0&&m.lengthSquared()>0)
+//            std::cout<<m.dot(a)<<std::endl;
+        m = m*.5+Vector3(0,.5,0);
+//        _acc += m*normalForceScalar*.5;
+//        std::cout<<m*normalForceScalar;
+        _acc += _world->getGravity()*-.4;
+    }
+//    if(!onGround)
+    else
+        _acc += _world->getGravity();
+
+    //************current test
+//    if(!onGround)
+//        _acc += _world->getGravity();
+
+//    Vector3 m = _mtv;
+//    Vector3 a = _acc;
+//    if(m.lengthSquared()>0)
+//        m.normalize();
+//    if(a.lengthSquared()>0)
+//        a.normalize();
+//    float normalForce = 0;
+//    if(a.lengthSquared()>0&&m.lengthSquared()>0){
+//        normalForce = m.dot(a);
+////        std::cout<<m.dot(a)<<std::endl;
+//    }
+
+//    if(normalForce<-.5){
+////        _acc += _world->getGravity()*-.4;
+//        _acc += _acc*-.4;
+//        std::cout<<normalForce<<std::endl;
+//    }
+
+
+//    if(onGround){
+//        Vector3 m = _mtv;
+//        m.normalize();
+//        _acc += m*normalForceScalar;
+////        _acc -= _world->getGravity()*normalForceScalar; //.4
+//        }
 
     //Calculate velocity
     _vel += _acc*seconds;
+//    _vel+=testAcc*seconds;
 
-    //TEST
-    float vScalar = 155;// 155; //295;
-//    _vel += verletAcc*vScalar*seconds;
-    _vel+=verletAcc*(1.0/seconds);
 
-    //Clamp vel, so as to not pass through cloth
-//    _vel.y = clamp(_vel.y,-maxVel,maxVel);
-        if(_vel.y<-8)
-            _vel.y=-8;
-    _vel.x = clamp(_vel.x,-maxVel,maxVel);
-    _vel.z = clamp(_vel.z,-maxVel,maxVel);
+
+    //Cap vel
+    if(_vel.length()>maxVel){
+        _vel.normalize();
+        _vel*=maxVel;
+    }
 
     _toMove  = seconds*_vel;
-
-//    Erase horizontal vel, so it can be overwritten next tick
-//    _vel -= verletAcc*seconds*vScalar;
 
     //Update camera
     _camera->moveTo(_shape->getPos()+Vector3(0,_playerHeight,0));

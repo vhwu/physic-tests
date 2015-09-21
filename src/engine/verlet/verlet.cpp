@@ -135,7 +135,27 @@ Vector3 Verlet::collide(Entity *e){
 //            _acc[i]+=force;
 
             vel = _pos[i]-_prevPos[i];
-            velocity += vel;
+
+            velocity.x+=vel.x;
+            velocity.z+=vel.z;
+
+            if(vel.y>0&&factor<-.14){
+                velocity.y+=vel.y*5;
+                std::cout<<"y"<<std::endl;
+                factor*=-1;
+                float text = factor-.14;
+                if(factor>.17)
+                    text*=5;
+                else
+                    text*=3;
+                translation.y+=text;
+            }
+//            else{
+//                velocity.x+=vel.x;
+//                velocity.z+=vel.z;
+//            }
+//            vel.y = 0;
+//            velocity += vel;
 
 //            if(vel.y>0&&factor<-.14){
 //                factor*=-1;
@@ -160,12 +180,13 @@ Vector3 Verlet::collide(Entity *e){
         translation/=count; //divide accumulative mtv by points hit
     }
     if(_manager->solve&&count>0){
-//        std::cout<<velocity<<std::endl;
-//        std::cout<<"v:"<<e->getVel()<<std::endl;
-        Vector3 horizontal = Vector3(velocity.x,0,velocity.z);
-        horizontal = horizontal/(count*2);
+//        Vector3 horizontal = Vector3(velocity.x,0,velocity.z);
+//        horizontal = horizontal/(count*2);
+//        e->verletAcc=horizontal;//*60;
 
-        e->verletAcc=horizontal;//*60;
+          e->verletAcc=velocity/(count*2);
+
+
 
 //        Vector3 actualVel = e->getVel();
 //        actualVel.y = 0;

@@ -21,7 +21,7 @@ enum PlayerControl
 class Player: public Entity
 {
 public:
-    Player(Camera* c, World* w, float height);
+    Player(Camera* c, World* w, VerletManager *v, float height);
     ~Player();
 
     Ellipsoid* getEllipsoid();
@@ -45,6 +45,7 @@ public:
 private:
     Camera* _camera;
     World* _world;
+    VerletManager* _vm;
     float _playerHeight;
 
     bool onGround = false;
@@ -61,6 +62,11 @@ private:
     int controlGoal [4]{0}; //per-control counter for acceleration/ deceleration towards goal velocity
     int curveScalar; //rate of acceleration/ deceleration
     int curveLength; //how long the acceleration/ deceleration phase is
+
+    //Goal velocity, for verlet terrain
+    bool onVerlet=false;
+    int verletCounter=0; //number of ticks player has been on verlet
+    int verletLength; //how many ticks it takes to apply full velocity influence from verlet
 };
 
 #endif // PLAYER_H

@@ -173,7 +173,11 @@ void Cloth::onDraw(Graphic* g){
     g->cull(false);
     for(Tri* t: _triangles){
         //g->setColor(Vector4(t->normal.x*.3,.55+t->normal.y*.2,.67+t->normal.z*.15,1));
-        g->setColor(Vector4(t->normal.x*.4,.65+t->normal.y*.3,.77+t->normal.z*.15,1));
+//        g->setColor(Vector4(t->normal.x*.4,.65+t->normal.y*.3,.77+t->normal.z*.15,1));
+//        g->setColor(Vector4(t->normal.x*.2+.5,.5+t->normal.y*.2,.47+t->normal.z*.7,1));
+        g->setColor(Vector4(t->normal.y*.35+.5,.45+t->normal.x*.3,.37+t->normal.z*.7,1));//nice warm color scheme
+
+
         g->drawTriangle(t->vertices,t->normal);
     }
     g->cull(true);

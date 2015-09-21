@@ -7,15 +7,15 @@ VerletLevel::VerletLevel(Screen *s): World(s),
     _startPos(Vector3(0,0,0)),
     _mouseSpeed(0.12)
 {
-    _player = new Player(_camera,this,_height);
-    _player->setPos(_startPos);
-    this->addEntity(_player);
-
     //MANAGERS
     _cManager = new ConstraintManager(this);
     this->addManager(_cManager);
     _vManager = new VerletManager(this,_cManager);
     this->addManager(_vManager);
+
+    _player = new Player(_camera,this,_vManager,_height);
+    _player->setPos(_startPos);
+    this->addEntity(_player);
 
     //CONTROLLING AVATAR-ENVIRONMENT INTERACTION: uncomment to change from defaults
     _player->setJump(7);            //Default: 7    Controls:velocity.y upon jump
@@ -24,7 +24,7 @@ VerletLevel::VerletLevel(Screen *s): World(s),
     _player->setCurveScalar(3);     //Default:3     Controls:rate of WASD acceleration/deceleration
     //Minimize phasing through cloth
     _player->setMaxVel(8);          //Default:8     Controls:'terminal velocity', so player doesn't go too fast
-    _player->setNormalScalar(.4);   //Default:.4    Controls:force applied upon contact w/ surface.
+    _player->setNormalScalar(4);   //Default:.4    Controls:force applied upon contact w/ surface.
             //1 = no influence upon environment
     //Controls
     _mouseSpeed = .12;               //Default:.12   Controls: speed of mouse interpolation

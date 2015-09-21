@@ -15,8 +15,8 @@ VerletTest6::VerletTest6(Screen *s):
     //SETUP
     //Verlet variables
     _vManager->gravity = Vector3(0,-1.9,0);
-    int numVerlets = 12;
-    int numTriangles = 6; //on edge of verlet along circle
+    int numVerlets = 5;
+    int numTriangles = 12; //on edge of verlet along circle
     Vector2 dim = Vector2(numTriangles+1,20);
     float percentVerlet = .8; //ratio between verlet:space on circle
 
