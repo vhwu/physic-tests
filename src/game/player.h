@@ -4,7 +4,6 @@
 #include <QKeyEvent>
 #include "vector.h"
 #include "engine/common/entity.h"
-#include "engine/common/raytracer.h"
 
 class Camera;
 class Graphic;
@@ -18,6 +17,7 @@ enum PlayerControl
 
 //Controls player movements with WASD
 //Include in keyPressEvent and keyReleaseEvent
+class VerletManager;
 class Player: public Entity
 {
 public:
@@ -32,41 +32,45 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
-    //Updates position of player by _toMove, and resets _toMove
-    void move(const Vector3& translate);
+    void move(const Vector3& translate);    //Updates pos by _toMove, and resets _toMove
     void onCollide(Entity *e, const Vector3 &mtv);
-    void resetPos(const Vector3 &pos); //Sets pos and cancels out any velocity/ acceleration
+    void resetPos(const Vector3 &pos);      //Sets pos and cancels out any velocity/ acceleration
 
     void setJump(int j){jumpVel=j;}
-    void setCurveScalar(int s){curveScalar=s;}
-    void setCurveLength(int l){curveLength = l;}
+    void setContScalar(int s){controlScalar=s;}
+    void setContMaxDur(int l){controlMaxDur = l;}
+    void setVerMaxDur(int v){verletMaxDur = v;}
     void setMaxVel(int v){maxVel=v;}
-    void setNormalScalar(float n){normalForceScalar=n;}
 private:
     Camera* _camera;
     World* _world;
     VerletManager* _vm;
+
     float _playerHeight;
-
+    int maxVel;                 //To prevent phasing through cloth
     bool onGround = false;
-    bool canJump = false;
-    int jumpCounter;  //for jumpDelay
-    int jumpDelay; //number of ticks player can jump for, after contact w/ ground
+
+    //Jumping
+    int jumpWindow;             //#ticks player can jump for, after contact w/ ground
+    int jumpCounter=0;
     int jumpVel;
+    Vector3 jumpVec=Vector3(0,0,0);
 
-    float normalForceScalar; //determines fraction of force applied upon contact w/ surface
-    int maxVel; //acc cap to prevent phasing through cloth
-    bool controlOn [4]{false}; //WASD
+    //WASD
+    bool controlOn [4]{false};  //Which WASD keys are on
+    int controlScalar;          //Constant scalar for force from controls
+    int controlMaxDur;          //#ticks for control acceleration/deceleration
+    int controlDur [4]{0};      //#ticks player has been pressing controls
 
-    //Goal velocity
-    int controlGoal [4]{0}; //per-control counter for acceleration/ deceleration towards goal velocity
-    int curveScalar; //rate of acceleration/ deceleration
-    int curveLength; //how long the acceleration/ deceleration phase is
-
-    //Goal velocity, for verlet terrain
+    //Friction
     bool onVerlet=false;
-    int verletCounter=0; //number of ticks player has been on verlet
-    int verletLength; //how many ticks it takes to apply full velocity influence from verlet
+    int verletMaxDur;           //#ticks for friction acceleration/deceleration
+    int verletDur=0;              //#ticks player has been on verlet
+
+    //Gravity
+    int gravityMaxDur;          //#ticks for gravity acceleration
+    int gravityMin=1;             //Min gravity- factors into player influence on terrain
+    int gravityDur=0;
 };
 
 #endif // PLAYER_H

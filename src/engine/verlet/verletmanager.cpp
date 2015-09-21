@@ -5,7 +5,9 @@
 #include "engine/common/entity.h"
 #include "constraintmanager.h"
 
-VerletManager::VerletManager(World *w, ConstraintManager *cm): Manager(w)
+VerletManager::VerletManager(World *w, ConstraintManager *cm):
+    Manager(w),
+    playerInfluence(.005)
 {
     _constraintManager = cm;
     //verlets = std::vector<Verlet*>();
@@ -30,8 +32,15 @@ bool VerletManager::rayTrace(RayTracer* ray, HitTest &result){
     return result.hit;
 }
 
+void VerletManager::setPlayerInfluence(float f){
+    playerInfluence = f;
+    for(Verlet* v: verlets)
+       v->setPlayerInfluence(f);
+}
+
 void VerletManager::addVerlet(Verlet* v){
     verlets.push_back(v);
+    v->setPlayerInfluence(playerInfluence);
 }
 
 

@@ -11,6 +11,7 @@ VerletTest6::VerletTest6(Screen *s):
 //    this->_gravity = Vector3(0,0,0);
     _startPos = Vector3(0,6,0);
     _player->setPos(_startPos);
+    _vManager->setPlayerInfluence(0);
 
     //SETUP
     //Verlet variables

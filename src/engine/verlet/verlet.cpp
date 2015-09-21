@@ -9,7 +9,8 @@
 
 #include <iostream>
 
-Verlet::Verlet(VerletManager* m)
+Verlet::Verlet(VerletManager* m):
+    playerInfluence(.005)
 {
     _manager = m;
 }
@@ -99,162 +100,58 @@ void Verlet::calculate(Tri* t){
 Vector3 Verlet::collide(Entity *e){
     Ellipsoid* el = e->getEllipsoid();
     Vector3 toMove = e->getMove();
-    Vector3 force = e->getAcc();
-        if(force.y<0)
-            force.y = force.y*=3;
-
+    Vector3 playerVel = e->getVel();
     Vector3 center = el->getPos()+toMove;
     float radius = e->getDim().x;
-    //determines whether to move points themselves
-    bool solve = _manager->solve;
+    float radiusSquared = radius * radius;
 
-    float count = 0;  //how many points hit
-    Vector3 translation = Vector3(0,0,0); //accumulative mtv
-    Vector3 velocity = Vector3(0,0,0); //accumulative velocity
-
-    //TESTING
-    Vector3 vel = Vector3(0,0,0);
+    bool solve = _manager->solve;                   //determines whether points will move
+    float count = 0;                                //how many points hit
+    Vector3 translation = Vector3(0,0,0);           //accumulative mtv
+    Vector3 velocity = Vector3(0,0,0);              //accumulative velocity
 
     for(int i=0; i<numPoints; i++) {
-        Vector3 dist =_pos[i]-center; //distance between entity + point
-        float radiusSquared = radius * radius;
-        if(radiusSquared>dist.lengthSquared()){  //colliding
+        Vector3 dist =_pos[i]-center;
+        if(radiusSquared>dist.lengthSquared()){     //colliding
             count++;
 
-            //mtv
-            Vector3 unit = dist;
-            unit.normalize();
-            float factor = dist.length()-radius;
-            Vector3 extra = unit*factor;
+            //Find overlap of point w/ sphere (mtv) + apply this difference to acc. mtv
+            Vector3 unit = dist; unit.normalize();
 
-            if(solve)
-                _pos[i]=_pos[i]-(extra*sphereInfluence);
-            translation+=extra;
+            float offset = radius-dist.length();    //% of distance point is to center of sphere
+            Vector3 overlap = unit*offset;
+            translation-=overlap;
 
-            //TESTING
-//            _acc[i]+=force;
-
-            vel = _pos[i]-_prevPos[i];
-
-            velocity.x+=vel.x;
-            velocity.z+=vel.z;
-
-            if(vel.y>0&&factor<-.14){
-                velocity.y+=vel.y*5;
-                std::cout<<"y"<<std::endl;
-                factor*=-1;
-                float text = factor-.14;
-                if(factor>.17)
-                    text*=5;
-                else
-                    text*=3;
-                translation.y+=text;
+            //Move point by (scaled) difference and a percentage of player's velocity
+            if(solve){
+                Vector3 displacement = overlap*sphereInfluence;
+                Vector3 impartVel = playerVel*playerInfluence;
+                _pos[i]+=displacement+impartVel;
             }
-//            else{
-//                velocity.x+=vel.x;
-//                velocity.z+=vel.z;
-//            }
-//            vel.y = 0;
-//            velocity += vel;
 
-//            if(vel.y>0&&factor<-.14){
-//                factor*=-1;
-//                std::cout<<"test:"<<factor<<std::endl;
-//                float text = factor-.14;
-//                text*=8;
-//                translation.y+=text;
-//                if(factor>.17){
-//                    Vector3 v = e->getVel();
-//                    v.y+=((factor-.17)*300);
-//                    e->setVel(v);
-//                std::cout<<"jump"<<std::endl;
-//                }
-//            }
+            Vector3 vel = _pos[i]-_prevPos[i];
+            velocity+= vel;
 
+            //WIP
+            //To provide positional offset for player, should cloth be going too fast to be fixed w/ applying force
+            if(vel.y>0&&offset>.14){
+                velocity+=overlap*-5;
+                translation+=vel;
+            }
         }
-     }
+    }
 
     if(count>0){
-        //lower = jittery, higher = doesn't compensate for collisions
-        count *= .5;
-        translation/=count; //divide accumulative mtv by points hit
+        translation/=count*.5;                  //lower = jittery, higher = doesn't compensate for collisions
+        velocity/=count;
+        float n = playerVel.dot(translation);
+         if(n<0){                                //If player is moving into the surface of the verlet,
+             Vector3 nForce = translation*(-n);  //Apply normal force as scaled by offset
+             velocity+=nForce;
+         }
+         e->_verletAcc=velocity;                 //Only write over upon contact- value still used during deceleration
     }
-    if(_manager->solve&&count>0){
-//        Vector3 horizontal = Vector3(velocity.x,0,velocity.z);
-//        horizontal = horizontal/(count*2);
-//        e->verletAcc=horizontal;//*60;
-
-          e->verletAcc=velocity/(count*2);
-
-
-
-//        Vector3 actualVel = e->getVel();
-//        actualVel.y = 0;
-//        float align = 0;
-
-//        Vector3 currAcc = e->verletAcc;
-//        currAcc.y = 0;
-
-//        if(actualVel.lengthSquared()>0 && horizontal.lengthSquared()>0){
-//            Vector3 h = horizontal;
-//            Vector3 a = actualVel;
-//            h.normalize();
-//            a.normalize();
-////            horizontal.normalize();
-////            actualVel.normalize();
-
-////            align = a.dot(h);
-//            align = actualVel.dot(horizontal);
-
-////            if(currAcc.lengthSquared()>0)
-////                currAcc.normalize();
-//////            horizontal.normalize();
-////            std::cout<<"curr acc:"<<currAcc<<std::endl;
-////            std::cout<<"ver acc:"<<horizontal<<std::endl;
-////            if(currAcc.lengthSquared()>0)
-////            std::cout<<currAcc.dot(horizontal)<<std::endl;
-//            std::cout<<"align:"<<align<<std::endl;
-//                 std::cout<<"v length:"<<horizontal.length()<<std::endl;
-//           std::cout<<"p length:"<<actualVel.length()<<std::endl;
-
-
-//           float scalar = (align+1)*.5;
-
-//           float l = horizontal.length();
-//           float p = actualVel.length();
-//           if(p<=0.0001)
-//               p=2.38;
-//   //        float lengthScalar = 290;
-//   //        if(actualVel.length()>0)
-//   //            lengthScalar = horizontal.length()/actualVel.length();
-//   //        std::cout<<"length scale:"<<lengthScalar<<std::endl;
-//           std::cout<<"verlet mag:"<<horizontal.length()<<std::endl;
-////           if(horizontal.lengthSquared()!=0){
-
-////               //verlet mag:.03 - .04
-////               //framerate: .015
-////               horizontal.normalize();
-////               //figure out magnitude ratio, and alos remember about + versus - dots
-////           }
-//   //        e->verletAcc=horizontal*(1-scalar); //*lengthScalar;
-////           std::cout<<12/l<<std::endl;
-//           e->verletAcc=horizontal*100;//*(6.5/l);//*(3.6/l);//*(1-scalar); //*lengthScalar;
-
-
-//   //        std::cout<<"scalar:"<<1-scalar<<std::endl;
-//           std::cout<<e->verletAcc<<std::endl;
-//           //you need to isolate out another horizontal acceleration: 'verlet'
-//           //actually, maybe you need a variable for horizontal vel (both control and verlet)... so you add them, and get dot
-//           //though, what do you do once you leave the verlet? how to you make verletAcc degrade?
-        }
-//        else{
-//            e->verletAcc=Vector3(0,0,0);
-//        }
-
-//    }
-
-    toMove+=translation;
-    e->setMove(toMove);
+    e->setMove(toMove+translation);
     return translation;
 }
 

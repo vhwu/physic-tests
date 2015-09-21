@@ -17,17 +17,18 @@ VerletLevel::VerletLevel(Screen *s): World(s),
     _player->setPos(_startPos);
     this->addEntity(_player);
 
-    //CONTROLLING AVATAR-ENVIRONMENT INTERACTION: uncomment to change from defaults
-    _player->setJump(7);            //Default: 7    Controls:velocity.y upon jump
-    //Player goal velocity
-    _player->setCurveLength(60);    //Default:60    Controls:# of ticks for WASD acceleration/deceleration
-    _player->setCurveScalar(3);     //Default:3     Controls:rate of WASD acceleration/deceleration
-    //Minimize phasing through cloth
-    _player->setMaxVel(8);          //Default:8     Controls:'terminal velocity', so player doesn't go too fast
-    _player->setNormalScalar(4);   //Default:.4    Controls:force applied upon contact w/ surface.
-            //1 = no influence upon environment
-    //Controls
-    _mouseSpeed = .12;               //Default:.12   Controls: speed of mouse interpolation
+    //VARIABLES FOR CONTROLLING AVATAR-ENVIRONMENT INTERACTION- change in individual levels
+    _player->setJump(7);                //Default: 7    Controls:vel.y upon jump
+    _player->setMaxVel(16);             //Default:15    Controls:'terminal vel', to prevent phasing through cloth
+    //Timed-based scaling (ease-in/out) of influences on player motion
+    _player->setContMaxDur(60);         //Default:60    Controls:# of ticks for WASD acceleration/deceleration
+    _player->setContScalar(3);          //Default:3     Controls:WASD scalar- speed control
+    _player->setVerMaxDur(60);          //Default:60    Controls:# of ticks for friction acceleration/deceleration
+    //Constraint controls
+    _mouseSpeed = .12;                  //Default:.12   Controls: speed of mouse interpolation
+    //Verlet controls
+    _vManager->setPlayerInfluence(.005);//Default:.005  Controls: how much cloth is affected by player's vel
+            //Note: set to 0 for friction to work. Probably should be kept <.01
 }
 
 VerletLevel::~VerletLevel()

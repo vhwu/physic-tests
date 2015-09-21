@@ -37,6 +37,8 @@ public:
     static const int NUM = 5000;
     //between 0 and 1: how much cloth is influenced by collisions
     float sphereInfluence = 1;
+    //between 0 and .01: how much cloth is influenced by player's velocity
+    void setPlayerInfluence(float f){playerInfluence = f;}
     Vector3 rayTraceSize = Vector3(.5,.5,.5);
 
     int getSize(){return numPoints;}
@@ -63,10 +65,12 @@ public:
     void drawGradientLink(Link* l, Graphic* g);
 
     //***************************************************TESTING COLLISIONS
-//    QHash<int, QList<Tri*> > link_to_tri;
-//    Qlist<Tri*> _triPP[NUM]; //triangles per point
     std::vector<std::vector<Tri*> > triPP;
 protected:
+    //How much cloth is affected by velocity of colliding entity. Keep between 0 and .01
+    //Note: for friction to work, has to be set to 0
+    float playerInfluence;
+
     //Setting triangle vertices + normals after movement
     void calculate(Tri* t);
 

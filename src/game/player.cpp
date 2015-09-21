@@ -10,13 +10,13 @@ Player::Player(Camera* c, World* w, VerletManager* v, float height): Entity(),
     _world(w),
     _vm(v),
     _playerHeight(height),
-    jumpDelay(3),
-    jumpVel(7),
-    normalForceScalar(5),
     maxVel(15),
-    curveScalar(4),
-    curveLength(60),
-    verletLength(60)
+    jumpWindow(5),
+    jumpVel(7),
+    controlScalar(4),
+    controlMaxDur(60),
+    verletMaxDur(60),
+    gravityMaxDur(60)
 {
     _shape = new Ellipsoid(Vector3(0,0,0), Vector3(.5,.5,.5));
 }
@@ -32,145 +32,95 @@ Ellipsoid* Player::getEllipsoid(){
 
 void Player::onTick(float seconds)
 {
-    _vel.x=0;
-    _vel.z=0;
+    //Factors for time-based scaling (ease-in/out) of forces upon player motion:
+        //Direction of influence (camera orientation for WASD, verlet velocity for friction, etc)
+        //Duration of influence (how long player has been holding WASD, been on verlet, etc)
 
-    //Check if player is on ground
-    //If so, can jump for the next X (jumpDelay) ticks
+    //As acceleration (and therefore velocity) are composed of forces with changeable factors,
+        //they need to be re-calculated per tick based on updates to direction + duration
+
+    //RESET: at beginning, so values can be read by verlet during its update
+    _vel = Vector3(0,0,0);
+    _acc = Vector3(0,0,0);
+
+    //UPDATE INFLUENCES
     onGround = _mtv.y>0;
-    if(onGround&&!onVerlet&&_vm->solve){
-        verletCounter=0;
-        verletAcc=Vector3(0,0,0);
+    if(onGround&&!onVerlet&&_vm->solve){    //Initial contact w/ verlet: reset duration + direction
+        verletDur=0;
+        _verletAcc=Vector3(0,0,0);
     }
-    if(onGround){
-        canJump = true;
+    if(onGround){                           //On verlet: can jump for the next #jumpDelay ticks
         onVerlet = true;
-        jumpCounter = jumpDelay;
-    }
-    else if(jumpCounter>0)
-        jumpCounter--;
-    else{
-        canJump = false;
-//        verletAcc=Vector3(0,0,0);
-        onVerlet=false;
+        jumpCounter = jumpWindow;
     }
     if(!_vm->solve)
         onVerlet = false;
 
-    if(onVerlet&&verletCounter<verletLength){
-        verletCounter++;
-    }
-    else if(!onVerlet&&verletCounter>0){
-        verletCounter--;
-    }
-//    std::cout<<verletCounter<<std::endl;
+    //Counters for duration
+    if(!onGround&&jumpCounter>0)
+        jumpCounter--;
+    if(jumpCounter<=0)
+        onVerlet=false;
+    if(onVerlet&&verletDur<verletMaxDur)
+        verletDur++;
+    else if(!onVerlet&&verletDur>0)
+        verletDur--;
+    if(!onGround&&gravityDur<gravityMaxDur)
+        gravityDur++;
+    if(onGround&&gravityDur>gravityMin)
+        gravityDur--;
 
-    _acc = Vector3(0,0,0);
-
-    //Calculate horizontal force- from player input + goal velocity
-    //Note: kept separate from vertical acc b/c horizontal acc is dependent on camera angle,
-        //and therefore has to be overwritten per tick in case player turns
-    Vector3 horizontalAcc = Vector3(0,0,0);
+    //CALCULATE COMPONENT FORCES
+    //Calculate force from WASD controls
+    Vector3 controlForce = Vector3(0,0,0);
     for(int i = 0; i<4; i++){
-        Vector3 dir;
+        Vector3 dir;                            //update direction
         if(i==W)dir = _camera->getForward();
         if(i==A)dir = _camera->getLeft();
-//        if(i==A)dir = Vector3(0,-1,0);
         if(i==S)dir = _camera->getBackward();
         if(i==D)dir = _camera->getRight();
 
-        int& goal = controlGoal[i];
-        if(controlOn[i]&&goal<=curveLength) //taper on force applied until player approaches goal vel
-            goal++;
-        else if(goal>0) //taper off force applied after player reaches goal vel
-            goal--;
-        horizontalAcc+=dir*curveScalar*goal;
+        int& dur = controlDur[i];               //update duration
+        if(controlOn[i]&&dur<=controlMaxDur)
+            dur++;
+        else if(dur>0)
+            dur--;
+
+        controlForce+=dir*controlScalar*dur;
     }
-    _acc += horizontalAcc;
+    _acc += controlForce;
 
-    //Verlet influence test
-    Vector3 testAcc =  verletAcc*(1.0/seconds); //velocity
-    testAcc = testAcc/seconds; //acc
-    float fraction = (float)verletCounter/verletLength;
-    testAcc = testAcc*fraction;
-    _acc += testAcc;
+    //Calculate force from verlet friction
+    Vector3 frictionForce =  _verletAcc*(1.0/seconds);      //velocity
+    frictionForce = frictionForce/seconds;                  //acc
+    float fraction = (float)verletDur/verletMaxDur;
+    frictionForce = frictionForce*fraction;
 
-    //Calculate vertical force (gravity)- applied if player is in the air
-/*    if(onVerlet&&!onGround){
-        Vector3 m = _mtv;
-        if(m.lengthSquared()>0)
-            m.normalize();
-        _acc += m*normalForceScalar;
-        _acc += _world->getGravity();
+    if(onGround)
+        _acc += frictionForce;
+    else{    //can cause strange 'jumps' if y is applied
+        _acc.x+=frictionForce.x;
+        _acc.z+=frictionForce.z;
     }
-    else */
-//    if(onVerlet){
-    if(onGround){
 
-        Vector3 m = _mtv;
-        Vector3 a = _acc;
-        if(m.lengthSquared()>0)
-            m.normalize();
-        if(a.lengthSquared()>0)
-            a.normalize();
-//        if(a.lengthSquared()>0&&m.lengthSquared()>0)
-//            std::cout<<m.dot(a)<<std::endl;
-        m = m*.5+Vector3(0,.5,0);
-//        _acc += m*normalForceScalar*.5;
-//        std::cout<<m*normalForceScalar;
-        _acc += _world->getGravity()*-.4;
-    }
-//    if(!onGround)
-    else
-        _acc += _world->getGravity();
+    //Calculate force from gravity
+    _acc += _world->getGravity()*gravityDur;
 
-    //************current test
-//    if(!onGround)
-//        _acc += _world->getGravity();
-
-//    Vector3 m = _mtv;
-//    Vector3 a = _acc;
-//    if(m.lengthSquared()>0)
-//        m.normalize();
-//    if(a.lengthSquared()>0)
-//        a.normalize();
-//    float normalForce = 0;
-//    if(a.lengthSquared()>0&&m.lengthSquared()>0){
-//        normalForce = m.dot(a);
-////        std::cout<<m.dot(a)<<std::endl;
-//    }
-
-//    if(normalForce<-.5){
-////        _acc += _world->getGravity()*-.4;
-//        _acc += _acc*-.4;
-//        std::cout<<normalForce<<std::endl;
-//    }
-
-
-//    if(onGround){
-//        Vector3 m = _mtv;
-//        m.normalize();
-//        _acc += m*normalForceScalar;
-////        _acc -= _world->getGravity()*normalForceScalar; //.4
-//        }
-
-    //Calculate velocity
+    //VELOCITY
     _vel += _acc*seconds;
-//    _vel+=testAcc*seconds;
-
-
-
-    //Cap vel
-    if(_vel.length()>maxVel){
+    if(jumpVec.y>0){                                //apply jump
+        jumpVec.y+=_world->getGravity().y*seconds;
+        gravityDur--;
+        _vel.y = jumpVec.y;
+    }
+    if(_vel.lengthSquared()>maxVel*maxVel){         //apply cap
         _vel.normalize();
         _vel*=maxVel;
     }
-
     _toMove  = seconds*_vel;
 
     //Update camera
     _camera->moveTo(_shape->getPos()+Vector3(0,_playerHeight,0));
-
 }
 
 void Player::onCollide(Entity *e, const Vector3& mtv){
@@ -186,6 +136,15 @@ void Player::resetPos(const Vector3& pos){
     setPos(pos);
     setVel(Vector3(0,0,0));
     setAcc(Vector3(0,0,0));
+    setVerletAcc(Vector3(0,0,0));
+
+    jumpCounter = 0;
+    for(int i=0;i<4;i++){
+        controlOn[i]=false;
+        controlDur[i]=0;
+    }
+    verletDur = 0;
+    gravityDur = 0;
 }
 
 
@@ -200,8 +159,10 @@ void Player::keyPressEvent(QKeyEvent *event)
         if(event->key() == Qt::Key_S) controlOn[S]=true;
         if(event->key() == Qt::Key_A) controlOn[A]=true;
         if(event->key() == Qt::Key_D) controlOn[D]=true;
-        if(event->key() == Qt::Key_Space && canJump)
-            _vel.y=jumpVel;
+        if(event->key() == Qt::Key_Space && onVerlet){
+            jumpVec=Vector3(0,jumpVel,0);
+            gravityDur=gravityMin;
+        }
     if(event->key() == Qt::Key_P) _camera->changePerson();
 }
 

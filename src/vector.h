@@ -142,10 +142,17 @@ public:
 
     float lengthSquared() const { return x * x + y * y + z * z; }
     float length() const { return sqrtf(lengthSquared()); }
-    float dot(const Vector3 &vec) const { return x * vec.x + y * vec.y + z * vec.z; }
+    float dot(const Vector3 &vec) const {return x * vec.x + y * vec.y + z * vec.z;}
     Vector3 cross(const Vector3 &vec) const { return Vector3(y * vec.z - z * vec.y, z * vec.x - x * vec.z, x * vec.y - y * vec.x); }
     Vector3 unit() const { return *this / length(); }
-    void normalize() { *this = unit(); }
+    void normalize() {
+        if(this->lengthSquared()>0)
+            *this = unit();
+        else{
+            *this = Vector3(0,0,0);
+            std::cout<<"Attempting to normalize vector of length 0"<<std::endl;
+        }
+    }
 
     // Fraction should be a value in the range [0, 1]
     static Vector3 lerp(const Vector3 &a, const Vector3 &b, float fraction) { return a + (b - a) * fraction; }

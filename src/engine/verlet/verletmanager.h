@@ -23,6 +23,7 @@ public:
     Verlet* getVerlet(int i){return verlets[i];}
 
     Vector3 collideTerrain(Entity* e);
+    void setPlayerInfluence(float f);
     bool rayTrace(RayTracer* ray, HitTest &result);
 
     //Settings
@@ -41,6 +42,9 @@ private:
     void verlet(float seconds);
     //Adjusts positions to satisfy per-verlet constraints: linked and pin
     void constraints();
+
+    //For collisions: how much verlets are influenced by entity's velocity upon collision
+    float playerInfluence;
 };
 
 #endif // VERLETMANAGER_H

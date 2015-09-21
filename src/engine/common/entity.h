@@ -30,6 +30,7 @@ public:
     Vector3 getMove(){return _toMove;}
     Vector3 getVel(){return _vel;}
     Vector3 getAcc(){return _acc;}
+    Vector3 getVerletAcc(){return _verletAcc;}
     Vector3 getMtv(){return _mtv;}
 
     Ellipsoid* getEllipsoid();
@@ -37,6 +38,7 @@ public:
     //Setters
     void setPos(const Vector3& p){_shape->setPos(p);}
     void setVel(const Vector3& v){_vel = v;}
+    void setVerletAcc(const Vector3& a){_verletAcc = a;}
     void setAcc(const Vector3& a){_acc = a;}
     void setMove(const Vector3& move){_toMove = move;}
     void setMtv(const Vector3& mtv){_mtv = mtv;}
@@ -48,7 +50,8 @@ public:
 
     virtual void onCollide(Entity *, const Vector3& mtv);
     Collision collide(Entity* e);
-    Vector3 verletAcc;
+    //Stores the forces the environment imparts upon the entity
+    Vector3 _verletAcc;
 protected:
     Shape* _shape;
     Vector3 _vel, _acc;
@@ -59,6 +62,7 @@ protected:
     Vector3 _mtv;
     //Whether it'll be drawn
     bool visible = true;
+
 };
 
 #endif // ENTITY_H
